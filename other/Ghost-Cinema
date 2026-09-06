@@ -1,713 +1,708 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghost Hub · Cinema</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* ---------- CLEAN PURPLE & WHITE · MOVIE THEATER VIBE ---------- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghost Hub · Cinema</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #f5f0ff;
-            /* soft purple-white */
-            color: #1e1028;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><path fill="%23f5f0ff" stroke="%235a2d7a" stroke-width="1.5" d="M16 2C10 2 6 7 6 13v10c0 2.5 1.8 3.8 3.5 3.2l2.5 3.3 2.5-3.8 2.5 3.8 2.5-3.3c1.7.6 3.5-.7 3.5-3.2V13c0-6-4-11-10-11z"/><circle cx="12" cy="13" r="2" fill="%235a2d7a"/><circle cx="20" cy="13" r="2" fill="%235a2d7a"/></svg>') 4 2, auto;
-        }
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: #f5f0ff;
+        color: #1e1028;
+    }
 
-        /* --- cinema curtains / gradient --- */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(ellipse at 20% 50%, rgba(180, 140, 220, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 50%, rgba(180, 140, 220, 0.08) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: -1;
-        }
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+            radial-gradient(ellipse at 20% 50%, rgba(180, 140, 220, 0.08) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 50%, rgba(180, 140, 220, 0.08) 0%, transparent 60%);
+        pointer-events: none;
+        z-index: -1;
+    }
 
-        /* --- header --- */
-        header {
-            background: linear-gradient(145deg, #ffffff, #f0eaff);
-            padding: 24px 20px 18px;
-            text-align: center;
-            border-bottom: 3px solid #b392d0;
-            box-shadow: 0 6px 30px rgba(90, 45, 122, 0.08);
+    /* --- layout shell: sidebar + content --- */
+    .app-shell {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* --- sidebar --- */
+    #categorySidebar {
+        width: 220px;
+        flex-shrink: 0;
+        background: linear-gradient(180deg, #ffffff, #f3edfd);
+        border-right: 3px solid #b392d0;
+        padding: 20px 14px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    #categorySidebar h2 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7a4a9e;
+        margin-bottom: 14px;
+        padding-left: 6px;
+    }
+    #categorySidebar ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    #categorySidebar button {
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: #3a2450;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.15s;
+    }
+    #categorySidebar button:hover {
+        background: #ede4fc;
+        color: #2d1640;
+    }
+    #categorySidebar button.active {
+        background: #7a4a9e;
+        color: white;
+    }
+    #categorySidebar button i {
+        width: 16px;
+        text-align: center;
+        color: #8a5aaa;
+        flex-shrink: 0;
+    }
+    #categorySidebar button.active i {
+        color: white;
+    }
+
+    /* --- main column --- */
+    .main-col {
+        flex: 1;
+        min-width: 0;
+    }
+
+    header {
+        background: linear-gradient(145deg, #ffffff, #f0eaff);
+        padding: 24px 20px 18px;
+        text-align: center;
+        border-bottom: 3px solid #b392d0;
+        box-shadow: 0 6px 30px rgba(90, 45, 122, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(4px);
+    }
+
+    h1 {
+        font-size: 2.6rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: #2d1640;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+    h1 i { color: #7a4a9e; font-size: 2.2rem; }
+
+    #searchBar {
+        width: 92%;
+        max-width: 540px;
+        padding: 14px 22px;
+        border: 2px solid #d5c0e8;
+        border-radius: 60px;
+        background: white;
+        color: #1e1028;
+        font-size: 1rem;
+        outline: none;
+        transition: 0.2s;
+        box-shadow: 0 2px 12px rgba(90, 45, 122, 0.04);
+    }
+    #searchBar:focus {
+        border-color: #9a6abf;
+        box-shadow: 0 0 0 4px rgba(154, 106, 191, 0.15);
+    }
+    #searchBar::placeholder { color: #a08ab0; }
+
+    .container {
+        max-width: 1280px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .category-header {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #2d1640;
+        margin: 48px 0 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px double #c8b0de;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        letter-spacing: 0.3px;
+        scroll-margin-top: 110px; /* keeps header visible under sticky top bar */
+    }
+    .category-header i { color: #8a5aaa; font-size: 1.6rem; }
+
+    .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 22px;
+    }
+
+    .movie-card {
+        background: white;
+        border-radius: 20px 8px 20px 8px;
+        box-shadow: 0 4px 16px rgba(90, 45, 122, 0.06), 0 1px 4px rgba(90, 45, 122, 0.04);
+        border: 1px solid #e6dbf0;
+        transition: 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
+    .movie-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(90, 45, 122, 0.10);
+        border-color: #b392d0;
+    }
+
+    .movie-card a {
+        display: block;
+        padding: 22px 16px;
+        text-decoration: none;
+        color: #1e1028;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .rating {
+        display: inline-block;
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 3px 12px;
+        border-radius: 30px;
+        margin-left: 5px;
+        vertical-align: middle;
+        letter-spacing: 0.3px;
+        background: #ede4fc;
+        color: #2d1640;
+        border: 1px solid #d5c0e8;
+    }
+
+    footer {
+        text-align: center;
+        padding: 28px;
+        margin-top: 60px;
+        background: white;
+        border-top: 2px solid #e6dbf0;
+        color: #6a4a7a;
+        font-size: 0.95rem;
+    }
+
+    .movie-card a::after {
+        content: " \f08e";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 400;
+        font-size: 0.65rem;
+        color: #a08ab0;
+        margin-left: 4px;
+        opacity: 0.6;
+    }
+
+    #emptyState {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        color: #8a6a9a;
+        font-size: 1.05rem;
+    }
+
+    /* --- mobile: sidebar becomes a horizontal scroll strip up top --- */
+    @media (max-width: 900px) {
+        .app-shell { flex-direction: column; }
+        #categorySidebar {
+            width: 100%;
+            height: auto;
             position: sticky;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(4px);
+            z-index: 101;
+            border-right: none;
+            border-bottom: 3px solid #b392d0;
+            padding: 10px 12px;
         }
+        #categorySidebar h2 { display: none; }
+        #categorySidebar ul {
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 8px;
+            padding-bottom: 4px;
+        }
+        #categorySidebar li { flex-shrink: 0; }
+        #categorySidebar button { white-space: nowrap; }
+        header { position: static; }
+    }
 
-        h1 {
-            font-size: 2.6rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            color: #2d1640;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-        h1 i {
-            color: #7a4a9e;
-            font-size: 2.2rem;
-        }
-
-        #searchBar {
-            width: 92%;
-            max-width: 540px;
-            padding: 14px 22px;
-            border: 2px solid #d5c0e8;
-            border-radius: 60px;
-            background: white;
-            color: #1e1028;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.2s;
-            box-shadow: 0 2px 12px rgba(90, 45, 122, 0.04);
-        }
-        #searchBar:focus {
-            border-color: #9a6abf;
-            box-shadow: 0 0 0 4px rgba(154, 106, 191, 0.15);
-        }
-        #searchBar::placeholder {
-            color: #a08ab0;
-        }
-
-        /* --- container --- */
-        .container {
-            max-width: 1280px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* --- category headers (theater style) --- */
-        .category-header {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #2d1640;
-            margin: 48px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px double #c8b0de;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            letter-spacing: 0.3px;
-        }
-        .category-header i {
-            color: #8a5aaa;
-            font-size: 1.6rem;
-        }
-
-        /* --- movie grid (theater seating style) --- */
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-            gap: 22px;
-        }
-
-        /* --- movie card (ticket / seat) --- */
-        .movie-card {
-            background: white;
-            border-radius: 20px 8px 20px 8px;
-            box-shadow: 0 4px 16px rgba(90, 45, 122, 0.06), 0 1px 4px rgba(90, 45, 122, 0.04);
-            border: 1px solid #e6dbf0;
-            transition: 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        .movie-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 30px rgba(90, 45, 122, 0.10);
-            border-color: #b392d0;
-        }
-
-        .movie-card a {
-            display: block;
-            padding: 16px 14px 18px;
-            text-decoration: none;
-            color: #1e1028;
-            font-size: 0.95rem;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        /* --- ghost poster (replaces images) --- */
-        .movie-poster {
-            width: 100%;
-            height: 280px;
-            background: linear-gradient(145deg, #f5efff, #ede4fc);
-            border-radius: 16px 4px 16px 4px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            color: #7a4a9e;
-            border: 2px solid #e0d2ee;
-            transition: 0.2s;
-            box-shadow: inset 0 0 30px rgba(90, 45, 122, 0.02);
-        }
-        .movie-card:hover .movie-poster {
-            border-color: #b392d0;
-            background: linear-gradient(145deg, #f0eaff, #e6d8f5);
-        }
-        .movie-poster img {
-            display: none;
-        }
-
-        /* --- tags & ratings --- */
-        .new-tag,
-        .rating {
-            display: inline-block;
-            font-size: 0.65rem;
-            font-weight: 600;
-            padding: 3px 12px;
-            border-radius: 30px;
-            margin-left: 5px;
-            vertical-align: middle;
-            letter-spacing: 0.3px;
-        }
-        .new-tag {
-            background: #7a4a9e;
-            color: white;
-            box-shadow: 0 2px 8px rgba(122, 74, 158, 0.2);
-        }
-        .rating {
-            background: #ede4fc;
-            color: #2d1640;
-            border: 1px solid #d5c0e8;
-        }
-
-        /* --- footer (theater lobby) --- */
-        footer {
-            text-align: center;
-            padding: 28px;
-            margin-top: 60px;
-            background: white;
-            border-top: 2px solid #e6dbf0;
-            color: #6a4a7a;
-            font-size: 0.95rem;
-        }
-
-        /* --- player overlay (KEPT but hidden — we now open in new tabs) --- */
-        #videoPlayerOverlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 8, 25, 0.92);
-            backdrop-filter: blur(6px);
-            z-index: 2000;
-            display: none !important;
-            /* permanently hidden: all movies open in new tab */
-            flex-direction: column;
-        }
-        #videoPlayerOverlay.active {
-            display: none !important;
-        }
-
-        .player-header {
-            padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        #backButton {
-            background: #7a4a9e;
-            color: white;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-        #backButton:hover {
-            background: #9a6abf;
-        }
-        #playerTitle {
-            color: #e6dbf0;
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-        #playerIframe {
-            flex: 1;
-            width: 100%;
-            border: none;
-        }
-
-        /* --- page2 button (disabled, but kept) --- */
-        .page2-container {
-            text-align: center;
-            margin: 20px 0 10px;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-        #page2Btn {
-            display: inline-block;
-            padding: 12px 32px;
-            background: #e6dbf0;
-            color: #5a3a6a;
-            border-radius: 60px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border: 1px solid #d5c0e8;
-            cursor: default;
-        }
-
-        /* --- responsive --- */
-        @media (max-width: 700px) {
-            h1 {
-                font-size: 2rem;
-            }
-            .category-header {
-                font-size: 1.4rem;
-            }
-            .movie-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-            .movie-poster {
-                height: 200px;
-                font-size: 3.6rem;
-            }
-        }
-
-        /* small helper: open-in-new-tab indicator (subtle) */
-        .movie-card a[target="_blank"]::after {
-            content: " \f08e";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 400;
-            font-size: 0.65rem;
-            color: #a08ab0;
-            margin-left: 4px;
-            opacity: 0.6;
-        }
-        .movie-card a:not([target="_blank"])::after {
-            content: " \f08e";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 400;
-            font-size: 0.65rem;
-            color: #a08ab0;
-            margin-left: 4px;
-            opacity: 0.6;
-        }
-    </style>
+    @media (max-width: 700px) {
+        h1 { font-size: 2rem; }
+        .category-header { font-size: 1.4rem; }
+        .movie-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    }
+</style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header>
-        <h1><i class="fas fa-ghost"></i> Ghost Hub · Cinema</h1>
-        <input id="searchBar" type="text" placeholder="Search movies, shows, genres…">
-    </header>
+<div class="app-shell">
 
-    <!-- PLAYER OVERLAY (kept in HTML but hidden — all movies now open in new tab) -->
-    <div id="videoPlayerOverlay">
-        <div class="player-header">
-            <button id="backButton"><i class="fas fa-arrow-left"></i> Back</button>
-            <span id="playerTitle"></span>
-        </div>
-        <iframe id="playerIframe" allowfullscreen></iframe>
-    </div>
+    <!-- CATEGORY SIDEBAR -->
+    <nav id="categorySidebar">
+        <h2>Categories</h2>
+        <ul id="categoryList"></ul>
+    </nav>
 
-    <!-- MAIN CONTENT -->
-    <div class="container">
+    <div class="main-col">
+        <header>
+            <h1><i class="fas fa-ghost"></i> Ghost Hub · Cinema</h1>
+            <input id="searchBar" type="text" placeholder="Search movies, shows, genres…">
+        </header>
 
-        <!-- ========== NEW & FEATURED (with BACK ROOMS) ========== -->
-        <section class="category-section">
-            <h2 class="category-header"><i class="fas fa-star"></i> New &amp; Featured</h2>
-            <div class="movie-grid">
-                <!-- BACK ROOMS added -->
-                <div class="movie-card"><a href="https://drive.google.com/file/d/16BohyqzQW9-L-RfWLHuVyrtamDiuU60w/view" data-title="The Back Rooms" target="_blank"><div class="movie-poster">👻</div>The Back Rooms <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1XfZu6XRDBLsCdUWw4yFAM-OkQPFhc6Bd/view?usp=sharing" data-title="Buddy" target="_blank"><div class="movie-poster">👻</div>Buddy <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1cV5RwG3qzRc0fxsqotgf3ud1mfJV_acc/view" data-title="Ted 2" target="_blank"><div class="movie-poster">👻</div>Ted 2 <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1wcE3D19t54BnWtLNl5cruklfPVPh92nY/view" data-title="Deadpool 2" target="_blank"><div class="movie-poster">👻</div>Deadpool 2 <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1XUjU4fhDH7qpPEg_me8vlMba1uelRIwj/view" data-title="Deadpool" target="_blank"><div class="movie-poster">👻</div>Deadpool <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1B_eiKUt7N5OxyUN9c37LG0pxcErP4yJ6/view" data-title="Deadpool and Wolverine" target="_blank"><div class="movie-poster">👻</div>Deadpool and Wolverine <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1S5OH4Rs78nCVUJX7CDrv9OEuW9UOYnvl" data-title="Invincible Season 1" target="_blank"><div class="movie-poster">👻</div>Invincible Season 1 <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1BhQDbp8lXDwS-Q-pq4axufeZI-5TklpR/view" data-title="IT" target="_blank"><div class="movie-poster">👻</div>IT <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1_pQ3kbz_a8l3B7SKfdP9dYQwKax0WHUD/view" data-title="Terrifier" target="_blank"><div class="movie-poster">👻</div>Terrifier <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1FPO2K8Oqb1O3qm1qb57NhZHhaGCvQjAz/view" data-title="Childs Play" target="_blank"><div class="movie-poster">👻</div>Childs Play <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1uCRRJZj1GAaweX996uHbF2zxPoessmGW/view" data-title="Alvin and the Chipmunks: The Squeakquel" target="_blank"><div class="movie-poster">👻</div>Alvin and the Chipmunks: The Squeakquel <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1AShi8tLLzbPiPO6vDokf8ew-qBbzh5Pb/view" data-title="Birds of Prey" target="_blank"><div class="movie-poster">👻</div>Birds of Prey <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1wiipkIcZ8r4itPij4w7CpOvC6uz-2wCS/view" data-title="Captain Underpants" target="_blank"><div class="movie-poster">👻</div>Captain Underpants <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1AHqrYm4cItyiEquPHJV5z3H81Cc0cCfI/view" data-title="Corpse Bride" target="_blank"><div class="movie-poster">👻</div>Corpse Bride <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1q5wcbuy536XQKTBAF7ImApMAlNMVHM5T/view" data-title="Detective Pikachu" target="_blank"><div class="movie-poster">👻</div>Detective Pikachu <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1MQzEVYP1iF_Wg3GVnyMd3iD_CnMDwi5D/view" data-title="Ted" target="_blank"><div class="movie-poster">👻</div>Ted <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/16xZsTyYEA2J5bbetJ2fO16WBKdnOEFau/view?usp=sharing" data-title="Obsession" target="_blank"><div class="movie-poster">👻</div>Obsession <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1hnYa-Pkxqu6Qhhp56QXE34Rnctia_3yw/view" data-title="The Amazing Spiderman 2" target="_blank"><div class="movie-poster">👻</div>The Amazing Spiderman 2 <span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://vidsrc.cc/v2/embed/tv/200875" data-title="It Welcome To Derry" target="_blank"><div class="movie-poster">👻</div>It welcome to derry<span class="new-tag">NOW HERE!!!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/u/1/folders/155pMa1ZgYzy0FRT6NfGkfdWkwxfOud3p" data-title="Featured Movies (open in new tab)" target="_blank"><div class="movie-poster">👻</div>Featured Movies<span class="new-tag">Systems</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1dW1XsOWtiL0mGHOFIB8n0rEhLPoa2buJ/view" data-title="Five Nights At Freddys 2 (2025)" target="_blank"><div class="movie-poster">👻</div>Five Nights At Freddys 2 (2025)<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1kliJw8luDNdGGnEbqjQgPCkfDzpC0wTq/view" data-title="Super Mario Bros" target="_blank"><div class="movie-poster">👻</div>Super Mario Bros<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1xREmxcmSX8pMxuWoEC8ZjH6AwQbIts1n/view" data-title="High Forces (2025)" target="_blank"><div class="movie-poster">👻</div>High Forces<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1MnUvz4XFl9WNK4AD4QRNjkvSRhx6hXsp/view" data-title="Tron Ares (480p)" target="_blank"><div class="movie-poster">👻</div>Tron Ares<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1QzAXjQctQdDHnMOZoZKCwySYboRQr6yh/view" data-title="The Running Man" target="_blank"><div class="movie-poster">👻</div>The Running Man<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1vkxbaTVYAS9TMQwSuAFBeBW7FwBKE48u/view" data-title="Friday (1995)" target="_blank"><div class="movie-poster">👻</div>Friday (1995)<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/0B_gF_cJaMa7FZ1ZJYnp6NnN0NXM/preview?resourcekey=0-JaKJOgGdcl7Pax50ovFSLg" data-title="Happy Gilmore" target="_blank"><div class="movie-poster">👻</div>Happy Gilmore<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ureuTKg_mAUrK8XmAWckGfz4xT0uTvhH/view" data-title="Wicked For Good (180p)" target="_blank"><div class="movie-poster">👻</div>Wicked For Good (180p)<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1r4RH1aOMDp0_peZDHG8qEOk8BpI3Ii_T/view" data-title="Pacific Rim" target="_blank"><div class="movie-poster">👻</div>Pacific Rim<span class="rating">6.8</span><span class="new-tag">Requested!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1A_wp1Xi-IQLCsxNnhc-xSUK04TqIuEf5/view" data-title="The Polar Express" target="_blank"><div class="movie-poster">👻</div>The Polar Express<span class="rating">6.6</span><span class="new-tag">Requested!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1JttHmQ0nz7UhvgK0QDUJP5vBQUPGkfTX/view" data-title="Avatar Way Of The Water (720p)" target="_blank"><div class="movie-poster">👻</div>Avatar Way Of The Water<span class="rating">7.6</span><span class="new-tag">Requested!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1McJIylATyVjGaoMA6Fzu2aMrm3IL3MTp/view" data-title="Predator BadLands (2025,1080p)" target="_blank"><div class="movie-poster">👻</div>Predator BadLands (2025,1080p)<span class="rating">6.2</span><span class="new-tag">Requested!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/10lys4xAmzALt_F081ej_9oP3i7Lm1Qgq/view" data-title="Zootopia 2" target="_blank"><div class="movie-poster">👻</div>Zootopia 2<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1emaZNk8shYA98Sq_K0x_iVT78_coOByR/view" data-title="Godzilla VS Kong" target="_blank"><div class="movie-poster">👻</div>Godzilla VS Kong<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://docs.google.com/presentation/d/13OwGRz5chTtcIsK0peYFlkv6ZLamDcVXgkMAWg6vHQw/edit" data-title="Popular Series" target="_blank"><div class="movie-poster">👻</div>Popular Series</a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1Nv42mABKqn8lGy1ljy04ZsMZO6jucmmF/view" data-title="Beetlejuice Beetlejuice (2024)" target="_blank"><div class="movie-poster">👻</div>Beetlejuice Beetlejuice (2024)<span class="rating">7.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1pCZAft86E9GppHxTFe2q_YM59QE6Dp7_/view" data-title="Interstellar" target="_blank"><div class="movie-poster">👻</div>Interstellar<span class="rating">8.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1aBzsoTJAjhZeFFDkIV2SN7p7ZHagUEDc/view" data-title="Deadpool &amp; Wolverine (2024)" target="_blank"><div class="movie-poster">👻</div>Deadpool &amp; Wolverine (2024)<span class="rating">7.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/u/1/folders/1PzKaoaK4blzlaoxnwC20gZoeYE5mDxWL" data-title="South Park Full Series" target="_blank"><div class="movie-poster">👻</div>South Park Full Series<span class="rating">8.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1SKE9sQ-DnHRRVGxU10Qk2QJ1Ws2jvv5M/view" data-title="Inside Out 2 (2024)" target="_blank"><div class="movie-poster">👻</div>Inside Out 2 (2024)<span class="rating">7.6</span></a></div>
-                <div class="movie-card"><a href="https://sites.google.com/view/cometshower/shows/hazbin-hotel?authuser=0" data-title="Hazbin Hotel (corny)" target="_blank"><div class="movie-poster">👻</div>Hazbin Hotel (CORNY)<span class="rating">7.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/11mVla6Y3qLX4pplfnxMavSczJ200_8dl/view" data-title="Spongebob The Movie" target="_blank"><div class="movie-poster">👻</div>Spongebob The Movie<span class="rating">7.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/134rk6NRYrF-lv0IPYD1Empf14qMSq6h_/view" data-title="Godzilla x Kong: The New Empire (2024)" target="_blank"><div class="movie-poster">👻</div>Godzilla x Kong: The New Empire (2024)<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/u/5/folders/1JjIbHHic30rIG8SBtASYAKTkBnysshAL" data-title="The Wonderfully Weird World of Gumball" target="_blank"><div class="movie-poster">👻</div>The Wonderfully Weird World of Gumball<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/15pAD1QGxR0jFZuO8CAHSUzzp_FEpqvf0/view" data-title="Sponge On the Run (2021)" target="_blank"><div class="movie-poster">👻</div>Sponge On the Run (2021)<span class="rating">6.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1uQXNlwz-_1PwGdnJqTGUswBhJWgH8zMP/view" data-title="Mufasa: The Lion King (2024)" target="_blank"><div class="movie-poster">👻</div>Mufasa: The Lion King (2024)<span class="rating">7.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1FHBn4bOQAAK7eDos_yRqYdtKhgm6uEXl/view" data-title="A Minecraft Movie (2025)" target="_blank"><div class="movie-poster">👻</div>A Minecraft Movie (2025)<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1__wCd7uV9s7qY-o7qZ6F1lO9UQPV7B90/view" data-title="JOKER" target="_blank"><div class="movie-poster">👻</div>JOKER<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1SKE9sQ-DnHRRVGxU10Qk2QJ1Ws2jvv5M/view" data-title="Friday (1995)" target="_blank"><div class="movie-poster">👻</div>Friday (1995)<span class="rating">7.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1cD5AaH1qXrA3CdlyD6lEJIfspu4FDOD-/view" data-title="Transformers 1" target="_blank"><div class="movie-poster">👻</div>Transformers 1<span class="rating">7.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/13pgT7HSDRXYeXvkU0RAEqbdrHrFxPiIm/preview" data-title="Sonic the Hedgehog 3 (2024)" target="_blank"><div class="movie-poster">👻</div>Sonic the Hedgehog 3 (2024)<span class="rating">7.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ZdhRDJac7D5Q9CXHYdPo_uoQU9aM7Mci/view" data-title="Venom: The Last Dance" target="_blank"><div class="movie-poster">👻</div>Venom: The Last Dance<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1QkggMVcGZDUcJNcAtuI7ZBCDKpb9WWgK/view" data-title="Ballerina (John Wick) 2025" target="_blank"><div class="movie-poster">👻</div>Ballerina (John Wick) 2025<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://sites.google.com/view/cometshower/anime/invincible?authuser=0" data-title="Invincible" target="_blank"><div class="movie-poster">👻</div>Invincible<span class="rating">8.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1pJ5N0z8bQFpqeMx2UrZqrU1526ygzxDm/view" data-title="Captain America: Brave New World" target="_blank"><div class="movie-poster">👻</div>Captain America: Brave New World<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1cBhl_4yyqtXZXvTMaAsS3zFBC076lHUe/view" data-title="Fantastic 4: First Steps (2025)" target="_blank"><div class="movie-poster">👻</div>Fantastic 4: First Steps (2025)<span class="rating">7.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1x0n_tZPq79HxAnV2ZwnVPTkBenFGZjx-/view" data-title="Jurassic Park Rebirth" target="_blank"><div class="movie-poster">👻</div>Jurassic Park Rebirth<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1w0ySmc9Lza6jAdgbxLdVQPd9xtmR_bq0/view" data-title="Mickey 17 (2025)" target="_blank"><div class="movie-poster">👻</div>Mickey 17 (2025)<span class="rating">7.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1nO646VaJQBN725tPVe9TLFnLBFPJ-jbL/view" data-title="Superman (2025)" target="_blank"><div class="movie-poster">👻</div>Superman (2025)<span class="rating">7.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1r0kRv4CX2nSBy9zmgClaYxXr0rH3tXti/view" data-title="Free Guy" target="_blank"><div class="movie-poster">👻</div>Free Guy<span class="rating">7.1</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1Nnkb35gi9f-jc4LvwVDUq8MTLur7mK3L/view" data-title="Black Phone 2" target="_blank"><div class="movie-poster">👻</div>Black Phone 2<span class="rating">7.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1EsX8k7nfYQrzC6apqJqnyfH7HLAHl31G/view?t=2810" data-title="Moana" target="_blank"><div class="movie-poster">👻</div>Moana<span class="rating">7.9</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1j1cYjjEDqV8VcTJ3oSwaOeMHPglVd-um/view?t=18" data-title="Bright Burn" target="_blank"><div class="movie-poster">👻</div>Bright Burn<span class="rating">6.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/12sQn1gxallBigyxC2aDFUWsKqX_g-e-7/view" data-title="Annabelle" target="_blank"><div class="movie-poster">👻</div>Annabelle<span class="rating">5.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1DX2PS1WKMKTBCcdwxzbjapo7He1OHTFb/view" data-title="Texas Chainsaw Massacre" target="_blank"><div class="movie-poster">👻</div>Texas Chainsaw Massacre<span class="rating">4.7</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1emX4CShNejqhStNK-b0xDVBBMA0t2gcE/view" data-title="Teenage Mutant Ninja Turtles: Mutant Mayhem" target="_blank"><div class="movie-poster">👻</div>Teenage Mutant Ninja Turtles: Mutant Mayhem<span class="rating">7.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1_N9iHDAM3RbU2a0GTfgcNXDGuZDT_yZ-/" data-title="The Wild Robot" target="_blank"><div class="movie-poster">👻</div>The Wild Robot<span class="rating">8.4</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1TgEV9AykxchfLMZ4zB4jJhSKKW5f9xRL/view?usp=drive_link" data-title="Dog Man" target="_blank"><div class="movie-poster">👻</div>Dog Man<span class="rating">8.4</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1CPZj45zQd1Ih-G0I7Ifo8dACj-4jbOJa/view?usp=drive_link" data-title="The Nun 2" target="_blank"><div class="movie-poster">👻</div>The Nun 2<span class="rating">6.1</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1e0OdhlzTKWie6TDXNDOKjKYXbfYfmz6t/view?t=3777" data-title="Inside Out" target="_blank"><div class="movie-poster">👻</div>Inside Out<span class="rating">8.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1RwaTM1sbgyVZU43JYct_L9vD1QWBzxbc/view" data-title="Fantastic Four First Steps" target="_blank"><div class="movie-poster">👻</div>Fantastic Four First Steps<span class="rating">7.9</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1-J7v3NOfQxngx50U66dELoa5P17m2xDP/view" data-title="Sing" target="_blank"><div class="movie-poster">👻</div>Sing<span class="rating">7.1</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1rKRsgdNioFs3rtkZai7Gz97FtAX0jdJ_/view" data-title="Diary of a Wimpy Kid: Rodrick Rules" target="_blank"><div class="movie-poster">👻</div>Diary of a Wimpy Kid: Rodrick Rules<span class="rating">6.3</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1A61oIlDB8zy0cgj2tJdquKVpaJzl26mr/view?usp=sharing" data-title="Superman 2025" target="_blank"><div class="movie-poster">👻</div>Superman 2025<span class="rating">7.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/10r1UB_bpBRfG8HykNJ2j63nwUawm-3FS/view" data-title="Thor: The Dark World" target="_blank"><div class="movie-poster">👻</div>Thor: The Dark World<span class="rating">6.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1AstKQ5KLX94k7RFIlsu2St9um8sS_w_M/view" data-title="Ant-Man and The Wasp" target="_blank"><div class="movie-poster">👻</div>Ant-Man and The Wasp<span class="rating">7.0</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1-QiYxJYgk4gw8fRHez7gUWMS6zE7vG-u/view" data-title="Ghost Rider" target="_blank"><div class="movie-poster">👻</div>Ghost Rider<span class="rating">5.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1nmGDHktR96jkaYl2lf-d-XTtNtFh4PTv/view" data-title="Top Gun: Maverick" target="_blank"><div class="movie-poster">👻</div>Top Gun: Maverick<span class="rating">8.3</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1sFYkkRX85JK-a2LRl8_QmZPhYkYIn6KG/view" data-title="The Little Mermaid" target="_blank"><div class="movie-poster">👻</div>The Little Mermaid<span class="rating">7.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1bAS1zgiXsYJVXzhra9Fg2PHWBbVDU8lJ/view" data-title="Power Rangers" target="_blank"><div class="movie-poster">👻</div>Power Rangers<span class="rating">6.0</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1nKl-oBgmnWygnF7xm6CfSWikp22ElVZY/view" data-title="Ron's Gone Wrong" target="_blank"><div class="movie-poster">👻</div>Ron's Gone Wrong<span class="rating">7.0</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1joF2I_zdjepCD9ukmjV672HTICUfp4tO/view" data-title="Turning Red" target="_blank"><div class="movie-poster">👻</div>Turning Red<span class="rating">7.0</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1bEzyd2eZSAAoXnVvG7sVuomxZd40TOMS/view?usp=drive_link" data-title="Ghostbusters" target="_blank"><div class="movie-poster">👻</div>Ghostbusters<span class="rating">7.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1lWqkPZ9BmdZhhRnrBz2WwcnAoL3Bn6WI/view?usp=drive_link" data-title="Plankton: The Movie" target="_blank"><div class="movie-poster">👻</div>Plankton: The Movie<span class="rating">6.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1dZ30bamkNV7OP9bJRF9bscboD9aRYaPY/view" data-title="Kingdom Of The Planet Of Apes" target="_blank"><div class="movie-poster">👻</div>Kingdom Of The Planet Of Apes<span class="rating">7.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ohXNP73ZyD2VISZZ0aV_rL2MSWskf9NX/view" data-title="Shrek" target="_blank"><div class="movie-poster">👻</div>Shrek<span class="rating">7.9</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ExVaSRcps4wvIcRczczvBPSGYxUkfvXE/view?usp=drive_link" data-title="The Mask" target="_blank"><div class="movie-poster">👻</div>The Mask<span class="rating">6.9</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/12UeDOq7tCcbfvEo_EtzkL3Gxho45UOl4/view?resourcekey" data-title="Twisters" target="_blank"><div class="movie-poster">👻</div>Twisters<span class="rating">7.0</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1eaQHnnwolzvKHEvs91RO-S2CpNvhmiU5/view?usp=drive_link" data-title="Charlie And The Chocolate Factory" target="_blank"><div class="movie-poster">👻</div>Charlie And The Chocolate Factory<span class="rating">6.7</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1XF-bj2OAmSe0MqdlwNWontlMDuFWDDmL/view?usp=drive_link" data-title="Santa Buddies" target="_blank"><div class="movie-poster">👻</div>Santa Buddies<span class="rating">5.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/17fAM9sipu3BPElFpqFrG3ukYahbUEZQJ/view?usp=drive_link" data-title="Saving Bikini Bottom with Sandy Cheeks" target="_blank"><div class="movie-poster">👻</div>Saving Bikini Bottom with Sandy Cheeks<span class="rating">6.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/122OjLQhI6uIS_qThRkLgUcgJh-U7PxBE/view" data-title="Pet Cemetary" target="_blank"><div class="movie-poster">👻</div>Pet Cemetary<span class="rating">6.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/open?id=1lbcxI_SXJBrqnxe4GnZYIk5VDhKxCgoF&amp;authuser=0" data-title="Pokemon Detective Pickachu" target="_blank"><div class="movie-poster">👻</div>Pokemon Detective Pickachu<span class="rating">6.7</span><span class="new-tag">NEW!</span></a></div>
-            </div>
-        </section>
-
-        <!-- ========== HORROR ========== -->
-        <section class="category-section">
-            <h2 class="category-header"><i class="fas fa-skull"></i> Horror</h2>
-            <div class="movie-grid">
-                <div class="movie-card"><a href="https://drive.google.com/file/d/14JD2YQRaI83eFDqb8R1wkYuu5kn3VVoE/view" data-title="Five Nights at Freddys Movie" target="_blank"><div class="movie-poster">👻</div>Five Nights at Freddys Movie<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1dd4z_ykIghvDgVE0YX7v4RK1zfMxH52r/view" data-title="Halloween (Full Movie)" target="_blank"><div class="movie-poster">👻</div>Halloween (Full Movie)<span class="rating">7.7</span></a></div>
-                <div class="movie-card"><a href="https://docs.google.com/document/d/1V6AQ7WdnbObzgZieAUWtX6Qu-njVGDk1zI3VTA_k7Mc/edit?tab=t.gwkywtxioysr" data-title="MORE HORROR" target="_blank"><div class="movie-poster">👻</div>MORE HORROR</a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1DGeZcbS6EeKgAZdmTRr-haezOxenoYRf/view" data-title="Conjuring The Last Rites" target="_blank"><div class="movie-poster">👻</div>Conjuring The Last Rites<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1BxJIkeBcjbsFKWF8myU6tYujMo2G7BJ5/view" data-title="Halloween Kills" target="_blank"><div class="movie-poster">👻</div>Halloween Kills<span class="rating">5.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1SkE7yTrS6RJl2kMDPozhqYPvv96Y4Sp-/view" data-title="Halloween Ends" target="_blank"><div class="movie-poster">👻</div>Halloween Ends<span class="rating">4.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1gklLsp7owMYJ9fGKkhdtBg3EU3OIpJ9n/view" data-title="Sinister" target="_blank"><div class="movie-poster">👻</div>Sinister<span class="rating">6.8</span><span class="new-tag">Requested!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1pf3faVonicfbhSDfIviaEWsvKquERczR/view" data-title="Friday the 13th" target="_blank"><div class="movie-poster">👻</div>Friday the 13th<span class="rating">6.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1K0v8NXcyS-ShrwaNpyvQ-1X-RbgUBihO/view" data-title="Scream 1 (1996)" target="_blank"><div class="movie-poster">👻</div>Scream 1 (1996)<span class="rating">7.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1i8w5FlmSFp3hixLRHeodPPtQq5r5VDQh/view" data-title="Scream 2 (1997)" target="_blank"><div class="movie-poster">👻</div>Scream 2 (1997)<span class="rating">6.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1QkIGawMXMjf-FQ18o169NPPB8_l-Wx0I/view" data-title="MEGAN 2.0" target="_blank"><div class="movie-poster">👻</div>MEGAN 2.0<span class="rating">6.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1IzaFo-PmeI3AiQ_qoDdjCbUdiu8Ohs-w/view" data-title="Scream 3 (2000)" target="_blank"><div class="movie-poster">👻</div>Scream 3 (2000)<span class="rating">5.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1HfyVEE2oFq1X8dHMWr5xJmMyHo79l7iG/view" data-title="Scream 4" target="_blank"><div class="movie-poster">👻</div>Scream 4<span class="rating">6.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1V7Hzo6Z4n5TJXFKI7tws0ksn-q9aBxzT/view" data-title="Scream VI (2023)" target="_blank"><div class="movie-poster">👻</div>Scream VI (2023)<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1zLFZE5jEzvjRSAawv9gOk-E5FYhsYblJ/view" data-title="Scream VI (Alt)" target="_blank"><div class="movie-poster">👻</div>Scream VI (Alt)<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1zmmWMZtvRT3d99hWXDuCSHkdTlBkIOzt/view" data-title="Child's Play (Theatrical)" target="_blank"><div class="movie-poster">👻</div>Child's Play (Theatrical)<span class="rating">6.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1IOoeJUBb83Vai480J3iuZsoQSuBC_mnQ/view" data-title="Child's Play 2" target="_blank"><div class="movie-poster">👻</div>Child's Play 2<span class="rating">5.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1sjzCM6SsEDbb1EzG4noI_rX868nAltcb/view" data-title="Bride of Chucky" target="_blank"><div class="movie-poster">👻</div>Bride of Chucky<span class="rating">5.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1cal928G6r3Vth-eqay5mbC3i3a6sWtzS/view" data-title="Seed of Chucky" target="_blank"><div class="movie-poster">👻</div>Seed of Chucky<span class="rating">4.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1qPipvrYaINji65Pr6U9Wb8eLXR1PcggX/view" data-title="Cult of Chucky" target="_blank"><div class="movie-poster">👻</div>Cult of Chucky<span class="rating">5.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1X4KKLClyHK_yIa_mYqFd4K6s_tvRAD1_/view" data-title="It (1990)" target="_blank"><div class="movie-poster">👻</div>It (1990)<span class="rating">6.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1zCYR3RF8IU3x-mkVK6Z0ad80rLdGpwfG/view" data-title="It (2017)" target="_blank"><div class="movie-poster">👻</div>It (2017)<span class="rating">7.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1HtdcHhPi9Zu05ll4Zn-BhKP6qKmAwobR/view" data-title="Straw (2025)" target="_blank"><div class="movie-poster">👻</div>Straw (2025)<span class="rating">5.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1bJGpdrtp9OdIyvIKxXA5xlsVdV3GeqhS/view" data-title="It Chapter Two" target="_blank"><div class="movie-poster">👻</div>It Chapter Two<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/17VPLw23bmvSYSa7C9fyiB9c3iXB09PNN/view" data-title="The Conjuring" target="_blank"><div class="movie-poster">👻</div>The Conjuring<span class="rating">7.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1zECVNreFAl8LNGcOrlPqtMzw_Su1S3AC/view" data-title="The Conjuring 2" target="_blank"><div class="movie-poster">👻</div>The Conjuring 2<span class="rating">7.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1k0tAH--aSS2Ik_xCwr9nJSr1XAS0cFH6/view" data-title="The Conjuring: Devil Made Me Do It" target="_blank"><div class="movie-poster">👻</div>The Conjuring: Devil Made Me Do It<span class="rating">6.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1BJ-24OqRAM91ujUu5qJkxFQsoav9yDQU/view" data-title="The Shining (1980)" target="_blank"><div class="movie-poster">👻</div>The Shining (1980)<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1Rhz-BomwJLVXvUbUjsZSMt0SjNDJ01PR/view" data-title="Saw (2004)" target="_blank"><div class="movie-poster">👻</div>Saw (2004)<span class="rating">7.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1KEsCxCI-Fl-7Cb0kDkpFKy6BjObE78NQ/view" data-title="Saw III" target="_blank"><div class="movie-poster">👻</div>Saw III<span class="rating">6.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/10Wn3otVUN00Sfc6sRZSnDFfaYDJ5VTNR/view" data-title="Saw X" target="_blank"><div class="movie-poster">👻</div>Saw X<span class="rating">6.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1_pQ3kbz_a8l3B7SKfdP9dYQwKax0WHUD/view" data-title="Terrifier 1" target="_blank"><div class="movie-poster">👻</div>Terrifier 1<span class="rating">5.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1_Jjo7rOcCkYt3UryVkV2XvTfrL4QvHTE/view" data-title="Terrifier 2" target="_blank"><div class="movie-poster">👻</div>Terrifier 2<span class="rating">6.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1sAj4FqfEIzHPIW7ZUPGGSOFTTaJr5AGI/view" data-title="Terrifier 3" target="_blank"><div class="movie-poster">👻</div>Terrifier 3<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1PFz-u8_kVFY8Z--NyloACB1DUwiT0oK4/view" data-title="The Purge (2013)" target="_blank"><div class="movie-poster">👻</div>The Purge (2013)<span class="rating">5.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1d7FFXzRf0u7L23AqH-HsUua_kA8a_edQ/view" data-title="The Purge: Anarchy" target="_blank"><div class="movie-poster">👻</div>The Purge: Anarchy<span class="rating">6.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1TmtXANeLZHYqnxcjn5JsiO2LMi6J7H_z/view" data-title="The Purge: Election Year" target="_blank"><div class="movie-poster">👻</div>The Purge: Election Year<span class="rating">6.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ibOSQ1uTdu7_VaEZ0X7KKFpXqB9Rsuzo/view" data-title="The Black Phone" target="_blank"><div class="movie-poster">👻</div>The Black Phone<span class="rating">7.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1WqwxGkOyDRfuo985rc-zmwyMvqu4K-D-/view" data-title="Annabelle" target="_blank"><div class="movie-poster">👻</div>Annabelle<span class="rating">5.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/15KHQgqhFmRc2zVedlVDqK48zTWq3Xioe/view" data-title="Annabelle Creation" target="_blank"><div class="movie-poster">👻</div>Annabelle Creation<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1_yZ-5-8mqmu4OKD8mzyfRYyLvIE4VqzM/view" data-title="Annabelle Comes Home" target="_blank"><div class="movie-poster">👻</div>Annabelle Comes Home<span class="rating">5.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1yH9xUSy3vawHFb5uRELKGUL25apXjXRs/view" data-title="Grave Encounters" target="_blank"><div class="movie-poster">👻</div>Grave Encounters<span class="rating">6.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1pP6Kkr-1WmcWWt2IKEIUv7RTkgMLXTmp/view" data-title="Godzilla (1985)" target="_blank"><div class="movie-poster">👻</div>Godzilla (1985)<span class="rating">6.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1fuFg1QpZAwYFPh0VOqfhTDxctdqFGbjU/view" data-title="Imaginary (2023)" target="_blank"><div class="movie-poster">👻</div>Imaginary (2023)<span class="rating">6.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1byQIJtSqr3urVghq8BnzkbA1PJHIEARc/view" data-title="House of 1000 Corpses" target="_blank"><div class="movie-poster">👻</div>House of 1000 Corpses<span class="rating">6.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1GaoJ-lnGHC-E1owpENlfvA9dU6XVMmuR/view" data-title="The Devil's Rejects" target="_blank"><div class="movie-poster">👻</div>The Devil's Rejects<span class="rating">6.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/15R5_6FCePf09QOVJurvRgFrxVlkR84um/view" data-title="3 From Hell" target="_blank"><div class="movie-poster">👻</div>3 From Hell<span class="rating">5.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/15LQuHdygSS2ae-STMYx2kGuo3uSRLpYn/view" data-title="Woman In the Yard" target="_blank"><div class="movie-poster">👻</div>Woman In the Yard<span class="rating">5.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1p4TJ6af9UjVh544rHcZ5-JNdfB5YEFo8/view?usp=drive_link" data-title="The Exorcist" target="_blank"><div class="movie-poster">👻</div>The Exorcist<span class="rating">8.1</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/14Audx3RqZPMTyLzErPzkKuCQPVWhTC0y/view" data-title="The Menu" target="_blank"><div class="movie-poster">👻</div>The Menu<span class="rating">7.4</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1Br63apD1pglhHIvSR2zLJ5p27nAxVG0Z/view?t=1" data-title="The First Purge" target="_blank"><div class="movie-poster">👻</div>The First Purge<span class="rating">5.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1MMl1EYr_OYdc9R-va2IIdPUmkqcj1UpR/view?usp=sharing" data-title="Megan" target="_blank"><div class="movie-poster">👻</div>Megan<span class="rating">6.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1njTri-d6eamwa3AFwuVD9nORZ7K6-D-N/view?usp=drive_link" data-title="Freddy VS Jason" target="_blank"><div class="movie-poster">👻</div>Freddy VS Jason<span class="rating">5.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/16e_h0zUsyFcjJBK-7Ck2OtTOm8DImN39/view?usp=drive_link" data-title="Jaws Vs Kraken" target="_blank"><div class="movie-poster">👻</div>Jaws Vs Kraken<span class="rating">4.2</span><span class="new-tag">NEW!</span></a></div>
-            </div>
-        </section>
-
-        <!-- ========== MARVEL & DC ========== -->
-        <section class="category-section">
-            <h2 class="category-header"><i class="fas fa-bolt"></i> Marvel &amp; DC</h2>
-            <div class="movie-grid">
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1QOIBXMPZk86AVo0jI-zXYAuJGiWRUnNg/view" data-title="Iron Man 1" target="_blank"><div class="movie-poster">👻</div>Iron Man 1<span class="rating">7.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1u1glpdPyZvJ1MAgTrxAnTrS8Wvys3Bdt/view" data-title="Iron Man 2" target="_blank"><div class="movie-poster">👻</div>Iron Man 2<span class="rating">7.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1f7AlYvxrURwU7138fr2CzyTmN0qK43rp/view" data-title="Iron Man 3" target="_blank"><div class="movie-poster">👻</div>Iron Man 3<span class="rating">7.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ZPKLQ-m8Wdal2EhtaKUVRZvP3I644kui/view" data-title="The Avengers (2012)" target="_blank"><div class="movie-poster">👻</div>The Avengers (2012)<span class="rating">8.0</span><span class="new-tag">Requested!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1im0w37bz61WkwbQTvP_InTsYwphE6Sxn/view" data-title="Avengers: Age of Ultron" target="_blank"><div class="movie-poster">👻</div>Avengers: Age of Ultron<span class="rating">7.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1VWLpj4G4CEgHnjpxfc67MrlEWu5pD75Y/view" data-title="Avengers: Infinity War" target="_blank"><div class="movie-poster">👻</div>Avengers: Infinity War<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1UsxNtlBxGFp955GwEB-s8wYJCA6bXt7e/view" data-title="Avengers: Endgame" target="_blank"><div class="movie-poster">👻</div>Avengers: Endgame<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1TlXuvpOkfd8k1eEyOLwSHUJzf6R40ytM/view" data-title="Ant-Man And The Wasp" target="_blank"><div class="movie-poster">👻</div>Ant-Man And The Wasp<span class="rating">7.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1GdMksUpH7ghCBF1j4sEmJU9hmZ3pPpkn/view" data-title="Black Panther" target="_blank"><div class="movie-poster">👻</div>Black Panther<span class="rating">7.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1drXS4b8XjDqgQ6tIjbS7RCN1Yq8CjDLZ/view" data-title="Deadpool 1" target="_blank"><div class="movie-poster">👻</div>Deadpool 1<span class="rating">8.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1wcE3D19t54BnWtLNl5cruklfPVPh92nY/view" data-title="Deadpool 2" target="_blank"><div class="movie-poster">👻</div>Deadpool 2<span class="rating">7.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1OVLVnfQs3uKyVMmvKDJB9e0YzJAtmIP1/view" data-title="Guardians of the Galaxy 1" target="_blank"><div class="movie-poster">👻</div>Guardians of the Galaxy 1<span class="rating">8.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1hyMj87AjFUk07FI0fDHLvjXiiwwY_WJS/view" data-title="Guardians of the Galaxy 2" target="_blank"><div class="movie-poster">👻</div>Guardians of the Galaxy 2<span class="rating">7.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1pFavPs7Mi9rx_BrAjxbeHNWg7ClAB2_K/view" data-title="Guardians of the Galaxy 3" target="_blank"><div class="movie-poster">👻</div>Guardians of the Galaxy 3<span class="rating">8.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1jom1D1Dc3eF3ZmCXVzh8lhlXrFGOBpXK/view" data-title="The Amazing Spider-Man 1" target="_blank"><div class="movie-poster">👻</div>The Amazing Spider-Man 1<span class="rating">6.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1bQpgzMav6AHi3UYnAagHPsGyraC0GWK_/view" data-title="The Amazing Spider-Man 2" target="_blank"><div class="movie-poster">👻</div>The Amazing Spider-Man 2<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/16nP21GFh_p9LNNW59oX2pMmTznKV43K4/view" data-title="Spider-Man: Homecoming" target="_blank"><div class="movie-poster">👻</div>Spider-Man: Homecoming<span class="rating">7.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1YFUpSLmxb6xIlbdJXScIkRYvwYxvJ_18/view" data-title="Spider-Man: Far from Home" target="_blank"><div class="movie-poster">👻</div>Spider-Man: Far from Home<span class="rating">7.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1oddQM8w-8UqQIvB-fPpy1h-7xvAbklmA/view" data-title="Spider-Man: No Way Home" target="_blank"><div class="movie-poster">👻</div>Spider-Man: No Way Home<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1V3Bq0lrDQUxJay5DDs3gK69ZvRNb1j2u/view" data-title="Spider-Man: Into The Spider-Verse" target="_blank"><div class="movie-poster">👻</div>Spider-Man: Into The Spider-Verse<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1Sd1l_LhKRp_2OE5gRJJyPubnZjJccLgQ/view" data-title="Spider-Man: Across The Spider-Verse" target="_blank"><div class="movie-poster">👻</div>Spider-Man: Across The Spider-Verse<span class="rating">8.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/14BaJhmDRr3veoH436CKdPDp9r-j5214I/view" data-title="Spider-Man (2002)" target="_blank"><div class="movie-poster">👻</div>Spider-Man (2002)<span class="rating">7.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1yV7ZmEkfOVOLdV51wN6vSeDf3_tQqBvf/view" data-title="Spider-Man 2 (2004)" target="_blank"><div class="movie-poster">👻</div>Spider-Man 2 (2004)<span class="rating">7.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ExTfRPC3YGmCSg8W2uFSYkUMw7a1vcTR/view" data-title="Spider-Man 3 (2007)" target="_blank"><div class="movie-poster">👻</div>Spider-Man 3 (2007)<span class="rating">6.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1XOhalDbPc-27oTHBEoiQCRjsXrktB4aY/view" data-title="X-Men: Apocalypse" target="_blank"><div class="movie-poster">👻</div>X-Men: Apocalypse<span class="rating">6.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1XoN0B1rsNKDDRphmI8bM606r4wRQ6JUH/view" data-title="Venom (2018)" target="_blank"><div class="movie-poster">👻</div>Venom (2018)<span class="rating">6.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/13d5gq3Kx3koobcfRTVyH9Hhum3s8Fxag/view" data-title="Venom: Let There Be Carnage" target="_blank"><div class="movie-poster">👻</div>Venom: Let There Be Carnage<span class="rating">5.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1u5u_-G0KReiP4Q4eHvx7qwb4jv6ZARdh/view" data-title="Shazam!" target="_blank"><div class="movie-poster">👻</div>Shazam!<span class="rating">7.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1LC17KNt1pxG1zJ43CwIBNGXaCN3cmLPc/view" data-title="Shazam! Fury of the Gods" target="_blank"><div class="movie-poster">👻</div>Shazam! Fury of the Gods<span class="rating">6.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ApUHMkZM-j3vM-rSG-kvjk3KuvJNAsXp/view" data-title="The Flash (2023)" target="_blank"><div class="movie-poster">👻</div>The Flash (2023)<span class="rating">6.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1T2XMXtDAlohPcGdi-u2p9zXF9Os9zkY1/view" data-title="Blue Beetle (2023)" target="_blank"><div class="movie-poster">👻</div>Blue Beetle (2023)<span class="rating">6.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1m2m6kudeN5pivaeCWfMR88xXEyZg8nFK/view" data-title="Superman (2025)" target="_blank"><div class="movie-poster">👻</div>Superman (2025)<span class="rating">7.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1B-Kb1tedWlkMlBWpDj8S42HfjLFUUVR0/view?usp=drivesdk" data-title="Black Adam" target="_blank"><div class="movie-poster">👻</div>Black Adam<span class="rating">6.1</span><span class="new-tag">NEW!</span></a></div>
-            </div>
-        </section>
-
-        <!-- ========== ANIMATION & KIDS ========== -->
-        <section class="category-section">
-            <h2 class="category-header"><i class="fas fa-gamepad"></i> Animation &amp; Kids</h2>
-            <div class="movie-grid">
-                <div class="movie-card"><a href="https://docs.google.com/presentation/d/1r9J-gGLjBQIggjVvz-tf_6PVHcotcYwz18Fcv7Jdd1g/edit?slide=id.p" data-title="Disney" target="_blank"><div class="movie-poster">👻</div>Disney</a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1zT4SAUoKx29aoNVS3scuTMvTqyNgMQ7E/view" data-title="KPOP Demon Hunters" target="_blank"><div class="movie-poster">👻</div>KPOP Demon Hunters<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/18As-PyI9E5z5iYu2ns3meSiusKI9KLEv/view" data-title="Bad Guys 2" target="_blank"><div class="movie-poster">👻</div>Bad Guys 2<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1xBiVuAnW0hFxIhG3samjzJJ-czMAKxN0/view" data-title="The Legend of the 10 Rings" target="_blank"><div class="movie-poster">👻</div>The Legend of the 10 Rings<span class="rating">7.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1sFYkkRX85JK-a2LRl8_QmZPhYkYIn6KG/view" data-title="The Little Mermaid" target="_blank"><div class="movie-poster">👻</div>The Little Mermaid<span class="rating">7.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1nKl-oBgmnWygnF7xm6CfSWikp22ElVZY/view" data-title="Ron's Gone Wrong" target="_blank"><div class="movie-poster">👻</div>Ron's Gone Wrong<span class="rating">7.0</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1fW6Ov5NIaRh4h78-qBpWeln_Vs9oEXOQ/view" data-title="Toy Story 1" target="_blank"><div class="movie-poster">👻</div>Toy Story 1<span class="rating">8.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1EiT5_VDJyMbrG5ezazVyzzOu1nWAkmE8/view" data-title="Wicked (2024)" target="_blank"><div class="movie-poster">👻</div>Wicked (2024)<span class="rating">7.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1k3RVDc_Vah1H9lFsXQZJ6mE3KqdDcK_T/view" data-title="Toy Story 2" target="_blank"><div class="movie-poster">👻</div>Toy Story 2<span class="rating">7.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/13msxxmyEco7CRBkO_Ju1SMx5KK4r4Su8/view" data-title="Toy Story 3" target="_blank"><div class="movie-poster">👻</div>Toy Story 3<span class="rating">8.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1HYeIrbf8A-vfvJsvYP59AQzG9l8nt03h/view" data-title="Zootopia" target="_blank"><div class="movie-poster">👻</div>Zootopia<span class="rating">8.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1bFUbsQ9VEazeCt5l_VBVDtjCsbJmZ_Vr/preview" data-title="Toy Story 4" target="_blank"><div class="movie-poster">👻</div>Toy Story 4<span class="rating">7.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ps_r1YV8y5h93_mUu4OFlPVVkPzT0Rui/view" data-title="Shrek 1" target="_blank"><div class="movie-poster">👻</div>Shrek 1<span class="rating">7.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1Ft-mWElx-1rZzIXJBswt_HQ-1VrZ4th2/view" data-title="Shrek 2" target="_blank"><div class="movie-poster">👻</div>Shrek 2<span class="rating">7.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1qhxQw4uC6aO1KN0UZrybu1YY1vdtBwmM/view" data-title="Shrek 3" target="_blank"><div class="movie-poster">👻</div>Shrek 3<span class="rating">6.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1xN-pzN1CePUsWHTmd9O--cOA-X_gqzQg/view" data-title="Shrek Forever After" target="_blank"><div class="movie-poster">👻</div>Shrek Forever After<span class="rating">6.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1HaXeNylNfZXhRudGTNLUWtrN-oAmone4/view" data-title="Sonic the Hedgehog 1" target="_blank"><div class="movie-poster">👻</div>Sonic the Hedgehog 1<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/13YPdlfR1BTzXfqwmfbzfiuPycjQsh0Yb/view" data-title="Sonic the Hedgehog 2" target="_blank"><div class="movie-poster">👻</div>Sonic the Hedgehog 2<span class="rating">6.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1AiuhAubyrKVmqpu3OfM1sonhRJrzw5v6/view" data-title="Bee Movie" target="_blank"><div class="movie-poster">👻</div>Bee Movie<span class="rating">6.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/16tKuEYtxi7EeKtX3yZZR-nXgZ_oGTxXS/view" data-title="Avatar" target="_blank"><div class="movie-poster">👻</div>Avatar<span class="rating">7.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1uCRRJZj1GAaweX996uHbF2zxPoessmGW/view" data-title="Alvin and the Chipmunks 1" target="_blank"><div class="movie-poster">👻</div>Alvin and the Chipmunks 1<span class="rating">5.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1em55qHTtdrWD4Dox9CXs9r1042TLu_cu/view" data-title="Alvin and the Chipmunks: Squeakuel" target="_blank"><div class="movie-poster">👻</div>Alvin and the Chipmunks: Squeakuel<span class="rating">4.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1LTKy48IbusfXsl5nSNDTd0M3A8B3aPke/view" data-title="Alvin and the Chipmunks: Chipwrecked" target="_blank"><div class="movie-poster">👻</div>Alvin and the Chipmunks: Chipwrecked<span class="rating">4.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1upRWBqPKcQjviBjAgYkzkWZuVjQ1SAWF/view" data-title="Despicable Me 1" target="_blank"><div class="movie-poster">👻</div>Despicable Me 1<span class="rating">7.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1qWNcu7uPAUqh0SaBlL4rEhcH1QaKIfgf/view" data-title="Despicable Me 2" target="_blank"><div class="movie-poster">👻</div>Despicable Me 2<span class="rating">7.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1mT5BU-DLMI0kDVjEIk7kBNL55ETuNyGN/view" data-title="Despicable Me 3" target="_blank"><div class="movie-poster">👻</div>Despicable Me 3<span class="rating">6.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1ggXkdigLOzQQgelB8exwzjVFb8bbef7d/view" data-title="Despicable Me 4 (2024)" target="_blank"><div class="movie-poster">👻</div>Despicable Me 4 (2024)<span class="rating">6.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1Wz1VPwDHWA3t8n54e-YpRM18ad1mQuSG/view" data-title="Minions" target="_blank"><div class="movie-poster">👻</div>Minions<span class="rating">6.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1lrJNkBON3H_5n8lF3WKCaUT6AUl9qbh4/view" data-title="Minions: Rise of Gru" target="_blank"><div class="movie-poster">👻</div>Minions: Rise of Gru<span class="rating">6.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1cPYsXfP2YqdtUNnqXg3ycANRQQOuVOmR/view" data-title="Kung Fu Panda 1" target="_blank"><div class="movie-poster">👻</div>Kung Fu Panda 1<span class="rating">7.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/19Iz7pU-A9RUMHe6q1I9faYi02ht5MwbT/view" data-title="Kung Fu Panda 2" target="_blank"><div class="movie-poster">👻</div>Kung Fu Panda 2<span class="rating">7.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1lfSnf9FQoB1xyeDJxEEh5JSG4ocnmqgx/view" data-title="Kung Fu Panda 3" target="_blank"><div class="movie-poster">👻</div>Kung Fu Panda 3<span class="rating">7.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/19e3HaItYsMHMCjHE0HD78-GsG1rbftJl/view" data-title="Kung Fu Panda 4 (2024)" target="_blank"><div class="movie-poster">👻</div>Kung Fu Panda 4 (2024)<span class="rating">6.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1TvrE3-T2tdfFhmEdhG_-NJlGNMnhHt2J/view" data-title="Madagascar 1" target="_blank"><div class="movie-poster">👻</div>Madagascar 1<span class="rating">6.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1uNRfbrFF8al6BtxKkXWhuq-DeMVd9NZn/view" data-title="Madagascar 2" target="_blank"><div class="movie-poster">👻</div>Madagascar 2<span class="rating">6.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1W4aM_WbjjxTlE_f5zcKPYZ5pNOym_W8K/view" data-title="Madagascar 3" target="_blank"><div class="movie-poster">👻</div>Madagascar 3<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1AIq4OqiMWiY9zZSayF5VID7pfTwSH6BM/view" data-title="A Bug's Life" target="_blank"><div class="movie-poster">👻</div>A Bug's Life<span class="rating">7.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1gZ4FVX5GLCSv2-i_sabXWhgl9u_3FeOB/view" data-title="Hotel Transylvania 1" target="_blank"><div class="movie-poster">👻</div>Hotel Transylvania 1<span class="rating">7.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1LZI5E52J_R_Cx6f3EXLl-BAn6vuhUduD/view" data-title="Hotel Transylvania 2" target="_blank"><div class="movie-poster">👻</div>Hotel Transylvania 2<span class="rating">6.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1aS3rHee1w5zNTGGmSFM57DSVlC1hSvIs/view" data-title="Hotel Transylvania 3" target="_blank"><div class="movie-poster">👻</div>Hotel Transylvania 3<span class="rating">6.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1_Ujbv8ONdcmV8TrYw8WzTwdD93deiiZp/view" data-title="Hotel Transylvania 4" target="_blank"><div class="movie-poster">👻</div>Hotel Transylvania 4<span class="rating">6.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1PHoIOxNpcaymH5qGJABEK9pJw-gO8lIx/view" data-title="The Emperor's New Groove" target="_blank"><div class="movie-poster">👻</div>The Emperor's New Groove<span class="rating">7.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1kjVDdXtZ3-O0SndMHeIwMXe4jNZJ4w2C/view" data-title="Ratatouille" target="_blank"><div class="movie-poster">👻</div>Ratatouille<span class="rating">8.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/16tKuEYtxi7EeKtX3yZZR-nXgZ_oGTxXS/view" data-title="Avatar (2009)" target="_blank"><div class="movie-poster">👻</div>Avatar (2009)<span class="rating">7.9</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1gdwI2JzBioxG5X6ewvaG2mcMeCUW346o/view" data-title="The Lorax" target="_blank"><div class="movie-poster">👻</div>The Lorax<span class="rating">6.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1AOuPlJ9PfNSI1CuulCwvtSXHfj92sBqI/view" data-title="Home Alone 1" target="_blank"><div class="movie-poster">👻</div>Home Alone 1<span class="rating">7.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/13wAOplYsKnssaM4MVRprZ4B1XCtl-rpk/view" data-title="Home Alone 2" target="_blank"><div class="movie-poster">👻</div>Home Alone 2<span class="rating">6.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1AUuPlJ9PfNSI1CuulCwvtSXHfj92sBqI/view" data-title="Home Alone 3" target="_blank"><div class="movie-poster">👻</div>Home Alone 3<span class="rating">4.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/11CN0fT7CwCHgz__mY4FWjcoT5w_wZD9S/view" data-title="Finding Nemo" target="_blank"><div class="movie-poster">👻</div>Finding Nemo<span class="rating">8.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1uDOp65KtEnID520JjNC_kMOm91mNfGq6/view" data-title="Finding Dory" target="_blank"><div class="movie-poster">👻</div>Finding Dory<span class="rating">7.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1gdwI2JzBioxG5X6ewvaG2mcMeCUW346o/view" data-title="The Boss Baby 1" target="_blank"><div class="movie-poster">👻</div>The Boss Baby 1<span class="rating">6.3</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1dSeZ1c4_p8T_lW7z0qpKsebKYN-R3zHR/view" data-title="Spider-Man: Across the Spider-Verse" target="_blank"><div class="movie-poster">👻</div>Spider-Man: Across the Spider-Verse<span class="rating">9.1</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1K88LvZ6q9KRwsdiVQ72Wrh5DQqWVLkd3/view?usp=sharing" data-title="Barbie" target="_blank"><div class="movie-poster">👻</div>Barbie<span class="rating">6.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1GHmi5ow0z_UXxHrbv6v9puDanjgKm_UI/view" data-title="WALL-E" target="_blank"><div class="movie-poster">👻</div>WALL-E<span class="rating">8.4</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1hhDIibpC8PMANtGqPHjIVL1y1NbQVJzJ/view?usp=sharing" data-title="Kung Fu Panda 4" target="_blank"><div class="movie-poster">👻</div>Kung Fu Panda 4<span class="rating">6.0</span><span class="new-tag">NEW!</span></a></div>
-            </div>
-        </section>
-
-        <!-- ========== ACTION & CRIME ========== -->
-        <section class="category-section">
-            <h2 class="category-header"><i class="fas fa-bomb"></i> Action &amp; Crime</h2>
-            <div class="movie-grid">
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1tS1nfpGotsimzKQRf0iqA5N0jaYe_JPv" data-title="Dexter" target="_blank"><div class="movie-poster">👻</div>Dexter<span class="rating">8.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1d99PsLSstcm8bo4_qRhSdtjulSTSgl9o/view" data-title="The Naked Gun" target="_blank"><div class="movie-poster">👻</div>The Naked Gun<span class="rating">7.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1wDuHpJp9ptvfIk6gcSvctYoOPdrZ-m-t/view" data-title="Wake Up Dead Man" target="_blank"><div class="movie-poster">👻</div>Wake Up Dead Man<span class="rating">7.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/17ppS1b-nnEVLdbLeL-t4E-ye2PVbhfni/view" data-title="The Shadow Edge" target="_blank"><div class="movie-poster">👻</div>The Shadow Edge<span class="rating">6.5</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1TpARoCL_gp5jkA2jWS5nmyezPinKQuFp/view" data-title="Stand Your Ground" target="_blank"><div class="movie-poster">👻</div>Stand Your Ground<span class="rating">6.2</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1e4mBkx_NTofy1nV7H6Wsnwoziox445ne/view" data-title="Hunting Season" target="_blank"><div class="movie-poster">👻</div>Hunting Season<span class="rating">5.8</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1nmGDHktR96jkaYl2lf-d-XTtNtFh4PTv/view" data-title="Top Gun: Maverick" target="_blank"><div class="movie-poster">👻</div>Top Gun: Maverick<span class="rating">8.3</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1wXahSAR89rLzwwc0lC-PwkWwV-yGLdlo" data-title="John Wick: The Complete Series" target="_blank"><div class="movie-poster">👻</div>John Wick: The Complete Series<span class="rating">8.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1gzsZEVTNEb93tSa0nuzlpR2n20D4Dyx9/view?t=3" data-title="John Wick Chapter 2" target="_blank"><div class="movie-poster">👻</div>John Wick Chapter 2<span class="rating">7.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1X9Kflcg0LuRjceV6JghCzs49px8cRTIk/view" data-title="John Wick" target="_blank"><div class="movie-poster">👻</div>John Wick<span class="rating">7.4</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/0B1NibQe1vz3LVDFDVjk3VWtGUjA/view?usp=drive_open&amp;resourcekey=0-zWX_T4zfMroDG2D_yVmVFg" data-title="Bad Boys 2" target="_blank"><div class="movie-poster">👻</div>Bad Boys 2<span class="rating">6.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1BHU65siN3GF1vj_JFO66qjS-9K3j_1MH/view?usp=drivesdk" data-title="Pacific Rim 2" target="_blank"><div class="movie-poster">👻</div>Pacific Rim 2<span class="rating">5.6</span><span class="new-tag">NEW!</span></a></div>
-            </div>
-        </section>
-
-        <!-- ========== TV SHOWS ========== -->
-        <section class="category-section">
-            <h2 class="category-header"><i class="fas fa-tv"></i> TV Shows</h2>
-            <div class="movie-grid">
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/11W6C-Jqv9iQVasqjfiaYz77puax1UTjH?usp=drive_link" target="_blank" data-title="Family Guy"><div class="movie-poster">👻</div>Family Guy<span class="rating">8.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1xqItOklvgleKL0ly9SNd1mClelBlNgPs?usp=drive_link" target="_blank" data-title="Teen Titans"><div class="movie-poster">👻</div>Teen Titans<span class="rating">8.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1Zs2H3Nxl-yQHm21RJNbh2bIAesJ5ouY" target="_blank" data-title="Squid Game All Seasons"><div class="movie-poster">👻</div>Squid Game All Seasons<span class="rating">8.3</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1FnMjttr2xj9HZfypWbN4L8FlqJyz9LUs" target="_blank" data-title="Breaking Bad"><div class="movie-poster">👻</div>Breaking Bad<span class="rating">9.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1OwoKydzUQUUp6n-Nh7CCAQXGLfchU8Ta" target="_blank" data-title="Adventure Time"><div class="movie-poster">👻</div>Adventure Time<span class="rating">8.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1LRAuy2ORadxBAqHT5VRT5RBKBKkM6fCF" target="_blank" data-title="Live TV - Featured Systems"><div class="movie-poster">👻</div>Live TV - Featured Systems<span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/folderview?id=15GtJc8NKaGoZyPoRXcJjTs6ZSQfKJ-xb" target="_blank" data-title="Ninjago"><div class="movie-poster">👻</div>Ninjago<span class="rating">7.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1EhzdG061fossyvUWpAWzDB_b6WhAWvbS?dmr=1&amp;ec=wgc-drive-hero-goto" target="_blank" data-title="Rick and Morty"><div class="movie-poster">👻</div>Rick and Morty<span class="rating">9.1</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1ZtFBjPAE-qVzdHJ3EKnvlBFNhux5m3Hi?usp=drive_link" target="_blank" data-title="The Simpsons"><div class="movie-poster">👻</div>The Simpsons<span class="rating">8.7</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1PzKaoaK4blzlaoxnwC20gZoeYE5mDxWL?usp=drive_link" target="_blank" data-title="South Park"><div class="movie-poster">👻</div>South Park<span class="rating">8.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1RUZj9WQzdEBYYLeKhD_Y9GRcZbNZMSEy" target="_blank" data-title="Everybody Hates Chris"><div class="movie-poster">👻</div>Everybody Hates Chris<span class="rating">8.0</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1tedaT2-lJvdIToqgsBx7lDo4tJl3TY-U?usp=drive_link" target="_blank" data-title="The Regular Show"><div class="movie-poster">👻</div>The Regular Show<span class="rating">8.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/u/1/folders/1px8IK0jaSlqj3fK-yawRwD0aQD4pXGld" target="_blank" data-title="Smiling Friends"><div class="movie-poster">👻</div>Smiling Friends<span class="rating">8.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1OPRfaVkM8MPcLLXmjAa24krAZCr0kHEO?usp=drive_link" target="_blank" data-title="The Amazing Digital Circus"><div class="movie-poster">👻</div>The Amazing Digital Circus<span class="rating">8.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1cOFMumtLFERJqS6Y5oTyBb6ZRXNHCgZF?usp=drive_link" target="_blank" data-title="SpongeBob SquarePants"><div class="movie-poster">👻</div>SpongeBob SquarePants<span class="rating">8.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1-2GIqLddtiou6bcJ9pUfVkZhUk_VnGML" target="_blank" data-title="Outer Banks"><div class="movie-poster">👻</div>Outer Banks<span class="rating">7.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1QAiFXO6iG-IB2A2oGModfBP74aVHa6S8?usp=drive_link" target="_blank" data-title="Murder Drones"><div class="movie-poster">👻</div>Murder Drones<span class="rating">8.3</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1tvjU4AqKfPOM_wPZA-pJsjYaOKguNaDD" target="_blank" data-title="Hey Arnold!"><div class="movie-poster">👻</div>Hey Arnold!<span class="rating">8.2</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/0B2lfcnXrxDFsUHl1OHdVc0pnWUU?resourcekey=0-14k0yy6znJA05TWl8GyMHw" target="_blank" data-title="Gravity Falls"><div class="movie-poster">👻</div>Gravity Falls<span class="rating">8.9</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1Yini_uXuxwQzlYqOX447QK2GQis52bxa?usp=drive_link" target="_blank" data-title="The Cleveland Show"><div class="movie-poster">👻</div>The Cleveland Show<span class="rating">6.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1oFvmFIdi3tkfM_RB56p41lch86YEeg-d" target="_blank" data-title="Young Sheldon"><div class="movie-poster">👻</div>Young Sheldon<span class="rating">7.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1iZZSfbqgfu8YDIP-5g8qp8XQ4al5WrDC" target="_blank" data-title="Danny Phantom"><div class="movie-poster">👻</div>Danny Phantom<span class="rating">8.1</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1iDvFUcwl4WvgAQgjPjrMDBarJ_I2NCSK" target="_blank" data-title="Cobra Kai"><div class="movie-poster">👻</div>Cobra Kai<span class="rating">8.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1dY6CivPkpyzvHJVWQUFr57DDpd1tfsFy?usp=sharing" target="_blank" data-title="Shameless"><div class="movie-poster">👻</div>Shameless<span class="rating">8.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/12hjbl3XZmVF1WFsjWuiCMJ9USmenFV3L" target="_blank" data-title="The Last Of Us (show)"><div class="movie-poster">👻</div>The Last Of Us (show)<span class="rating">8.9</span><span class="new-tag">NEW!</span></a></div>
-            </div>
-        </section>
-
-        <!-- ========== ANIME ========== -->
-        <section class="category-section">
-            <h2 class="category-header"><i class="fas fa-dragon"></i> Anime</h2>
-            <div class="movie-grid">
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1jOWTtXX3VqcJElQqovEvP5QTWCfgXLBS" target="_blank" data-title="Dragon Ball Z"><div class="movie-poster">👻</div>Dragon Ball Z<span class="rating">8.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1WUWO12Vnws_H4yhSIKn_I1PY3W0j7NbB?usp=drive_link" target="_blank" data-title="Attack On Titan 1-4"><div class="movie-poster">👻</div>Attack On Titan 1-4<span class="rating">9.1</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1ujarzaX_90FGOiRC15OmXOAgwSbdI_kA" target="_blank" data-title="The Boondocks"><div class="movie-poster">👻</div>The Boondocks<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1LNhG5Hjk4p9eJqvt0ooEpyAqnQRzJwYE" target="_blank" data-title="Death Note"><div class="movie-poster">👻</div>Death Note<span class="rating">9.0</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1mmBVdj-oKIC0aSdOcMcEnQ129-rKimKo" target="_blank" data-title="Demon Slayer"><div class="movie-poster">👻</div>Demon Slayer<span class="rating">8.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1dHK5v5NZNiDvlQ9VK06AAPFNngnkkQCZ" target="_blank" data-title="Naruto"><div class="movie-poster">👻</div>Naruto<span class="rating">8.4</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1juWFikMtGg4X-Ju9QVb-n0MSQOQvmIbg" target="_blank" data-title="Chainsaw Man"><div class="movie-poster">👻</div>Chainsaw Man<span class="rating">8.6</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1xewFLZCNhjF5DtQDM5VxDic7ClprMjal?usp=drive_link" target="_blank" data-title="Invincible"><div class="movie-poster">👻</div>Invincible<span class="rating">8.7</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1yGjMeMX0_1vUHa6XbpszYGe5yLqYLKRc" target="_blank" data-title="One Punch Man"><div class="movie-poster">👻</div>One Punch Man<span class="rating">8.9</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1L_4PmRvkuqYsvLQSzMuaqRVDQg2pb9Z6" target="_blank" data-title="Blue Lock"><div class="movie-poster">👻</div>Blue Lock<span class="rating">8.3</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1VL7AmdU7-Ad8SdvwSUS583sy1Sy_byxv" target="_blank" data-title="Baki Hanma Season 2"><div class="movie-poster">👻</div>Baki Hanma Season 2<span class="rating">7.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/14ES_2SDXFRV6n1FU880Hk8en7BMkOC_3" target="_blank" data-title="Chainsaw Man"><div class="movie-poster">👻</div>Chainsaw Man<span class="rating">8.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/u/5/folders/1T-JYKyNVjYjwzEmTDr6kErnlSlnT-I2X" target="_blank" data-title="Assassination Classroom"><div class="movie-poster">👻</div>Assassination Classroom<span class="rating">8.7</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1v8BMG58ZRYNIWSgIxxHezBSCc11XIBIv" target="_blank" data-title="My Hero Academia Season 1"><div class="movie-poster">👻</div>My Hero Academia Season 1<span class="rating">8.6</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/file/d/1x84uwAQzm7-j9MhDdNF5sb_jCRQFhjIa/view?usp=drive_link" target="_blank" data-title="Avatar: The Last Airbender"><div class="movie-poster">👻</div>Avatar: The Last Airbender<span class="rating">9.3</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1eqNcKK02wEdRV7RnfrmDRZf2s2QZHUyj" target="_blank" data-title="Jujutsu Kaisen"><div class="movie-poster">👻</div>Jujutsu Kaisen<span class="rating">8.8</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1Q8_n0CTVT3eUg_mZe-10NDYnJl9p-9w7" target="_blank" data-title="Beast Games"><div class="movie-poster">👻</div>Beast Games<span class="rating">7.5</span><span class="new-tag">NEW!</span></a></div>
-                <div class="movie-card"><a href="https://drive.google.com/drive/folders/1ezBjEruHXUq-cV5YGJK-WvXMUjbqNyCx" target="_blank" data-title="The Boys"><div class="movie-poster">👻</div>The Boys<span class="rating">8.7</span><span class="new-tag">NEW!</span></a></div>
-            </div>
-        </section>
-
-        <!-- PAGE 2 (disabled, but kept) -->
-        <div class="page2-container">
-            <span id="page2Btn">Page 2 (coming soon)</span>
+        <div class="container">
+            <div id="sections"></div>
+            <p id="emptyState">No matches found.</p>
         </div>
 
+        <footer>
+            <p><i class="fas fa-ghost" style="margin-right: 8px;"></i> Ghost Hub · Cinema experience · 2026</p>
+        </footer>
     </div>
 
-    <footer>
-        <p><i class="fas fa-ghost" style="margin-right: 8px;"></i> Ghost Hub · Cinema experience · 2026</p>
-    </footer>
+</div>
 
-    <script>
-        // --------------------------------------------------------------
-        // ALL MOVIE LINKS NOW OPEN IN A NEW TAB.
-        // The overlay is kept in the HTML (as requested) but is hidden via CSS.
-        // Links with target="_blank" already open in new tabs.
-        // --------------------------------------------------------------
+<script>
+// ============================================================
+// DATA
+// Each section: { id, title, icon, items: [{title, url, rating}] }
+// rating is optional. No "NEW" flags anymore (removed per request).
+// ============================================================
+const SECTIONS = [
+  {
+    id: "featured", title: "New & Featured", icon: "fa-star",
+    items: [
+      {title:"The Back Rooms", url:"https://drive.google.com/file/d/16BohyqzQW9-L-RfWLHuVyrtamDiuU60w/view"},
+      {title:"Buddy", url:"https://drive.google.com/file/d/1XfZu6XRDBLsCdUWw4yFAM-OkQPFhc6Bd/view?usp=sharing"},
+      {title:"Ted 2", url:"https://drive.google.com/file/d/1cV5RwG3qzRc0fxsqotgf3ud1mfJV_acc/view"},
+      {title:"Deadpool 2", url:"https://drive.google.com/file/d/1wcE3D19t54BnWtLNl5cruklfPVPh92nY/view"},
+      {title:"Deadpool", url:"https://drive.google.com/file/d/1XUjU4fhDH7qpPEg_me8vlMba1uelRIwj/view"},
+      {title:"Deadpool and Wolverine", url:"https://drive.google.com/file/d/1B_eiKUt7N5OxyUN9c37LG0pxcErP4yJ6/view"},
+      {title:"Invincible Season 1", url:"https://drive.google.com/drive/folders/1S5OH4Rs78nCVUJX7CDrv9OEuW9UOYnvl"},
+      {title:"IT", url:"https://drive.google.com/file/d/1BhQDbp8lXDwS-Q-pq4axufeZI-5TklpR/view"},
+      {title:"Terrifier", url:"https://drive.google.com/file/d/1_pQ3kbz_a8l3B7SKfdP9dYQwKax0WHUD/view"},
+      {title:"Childs Play", url:"https://drive.google.com/file/d/1FPO2K8Oqb1O3qm1qb57NhZHhaGCvQjAz/view"},
+      {title:"Alvin and the Chipmunks: The Squeakquel", url:"https://drive.google.com/file/d/1uCRRJZj1GAaweX996uHbF2zxPoessmGW/view"},
+      {title:"Birds of Prey", url:"https://drive.google.com/file/d/1AShi8tLLzbPiPO6vDokf8ew-qBbzh5Pb/view"},
+      {title:"Captain Underpants", url:"https://drive.google.com/file/d/1wiipkIcZ8r4itPij4w7CpOvC6uz-2wCS/view"},
+      {title:"Corpse Bride", url:"https://drive.google.com/file/d/1AHqrYm4cItyiEquPHJV5z3H81Cc0cCfI/view"},
+      {title:"Detective Pikachu", url:"https://drive.google.com/file/d/1q5wcbuy536XQKTBAF7ImApMAlNMVHM5T/view"},
+      {title:"Ted", url:"https://drive.google.com/file/d/1MQzEVYP1iF_Wg3GVnyMd3iD_CnMDwi5D/view"},
+      {title:"Obsession", url:"https://drive.google.com/file/d/16xZsTyYEA2J5bbetJ2fO16WBKdnOEFau/view?usp=sharing"},
+      {title:"The Amazing Spiderman 2", url:"https://drive.google.com/file/d/1hnYa-Pkxqu6Qhhp56QXE34Rnctia_3yw/view"},
+      {title:"It Welcome To Derry", url:"https://vidsrc.cc/v2/embed/tv/200875"},
+      {title:"Featured Movies", url:"https://drive.google.com/drive/u/1/folders/155pMa1ZgYzy0FRT6NfGkfdWkwxfOud3p"},
+      {title:"Five Nights At Freddys 2 (2025)", url:"https://drive.google.com/file/d/1dW1XsOWtiL0mGHOFIB8n0rEhLPoa2buJ/view"},
+      {title:"Super Mario Bros", url:"https://drive.google.com/file/d/1kliJw8luDNdGGnEbqjQgPCkfDzpC0wTq/view"},
+      {title:"High Forces (2025)", url:"https://drive.google.com/file/d/1xREmxcmSX8pMxuWoEC8ZjH6AwQbIts1n/view"},
+      {title:"Tron Ares (480p)", url:"https://drive.google.com/file/d/1MnUvz4XFl9WNK4AD4QRNjkvSRhx6hXsp/view"},
+      {title:"The Running Man", url:"https://drive.google.com/file/d/1QzAXjQctQdDHnMOZoZKCwySYboRQr6yh/view"},
+      {title:"Friday (1995)", url:"https://drive.google.com/file/d/1vkxbaTVYAS9TMQwSuAFBeBW7FwBKE48u/view"},
+      {title:"Happy Gilmore", url:"https://drive.google.com/file/d/0B_gF_cJaMa7FZ1ZJYnp6NnN0NXM/preview?resourcekey=0-JaKJOgGdcl7Pax50ovFSLg"},
+      {title:"Wicked For Good (180p)", url:"https://drive.google.com/file/d/1ureuTKg_mAUrK8XmAWckGfz4xT0uTvhH/view"},
+      {title:"Pacific Rim", url:"https://drive.google.com/file/d/1r4RH1aOMDp0_peZDHG8qEOk8BpI3Ii_T/view", rating:6.8},
+      {title:"The Polar Express", url:"https://drive.google.com/file/d/1A_wp1Xi-IQLCsxNnhc-xSUK04TqIuEf5/view", rating:6.6},
+      {title:"Avatar Way Of The Water (720p)", url:"https://drive.google.com/file/d/1JttHmQ0nz7UhvgK0QDUJP5vBQUPGkfTX/view", rating:7.6},
+      {title:"Predator BadLands (2025,1080p)", url:"https://drive.google.com/file/d/1McJIylATyVjGaoMA6Fzu2aMrm3IL3MTp/view", rating:6.2},
+      {title:"Zootopia 2", url:"https://drive.google.com/file/d/10lys4xAmzALt_F081ej_9oP3i7Lm1Qgq/view"},
+      {title:"Godzilla VS Kong", url:"https://drive.google.com/file/d/1emaZNk8shYA98Sq_K0x_iVT78_coOByR/view", rating:6.8},
+      {title:"Popular Series", url:"https://docs.google.com/presentation/d/13OwGRz5chTtcIsK0peYFlkv6ZLamDcVXgkMAWg6vHQw/edit"},
+      {title:"Beetlejuice Beetlejuice (2024)", url:"https://drive.google.com/file/d/1Nv42mABKqn8lGy1ljy04ZsMZO6jucmmF/view", rating:7.8},
+      {title:"Interstellar", url:"https://drive.google.com/file/d/1pCZAft86E9GppHxTFe2q_YM59QE6Dp7_/view", rating:8.6},
+      {title:"Deadpool & Wolverine (2024)", url:"https://drive.google.com/file/d/1aBzsoTJAjhZeFFDkIV2SN7p7ZHagUEDc/view", rating:7.9},
+      {title:"South Park Full Series", url:"https://drive.google.com/drive/u/1/folders/1PzKaoaK4blzlaoxnwC20gZoeYE5mDxWL", rating:8.2},
+      {title:"Inside Out 2 (2024)", url:"https://drive.google.com/file/d/1SKE9sQ-DnHRRVGxU10Qk2QJ1Ws2jvv5M/view", rating:7.6},
+      {title:"Hazbin Hotel (CORNY)", url:"https://sites.google.com/view/cometshower/shows/hazbin-hotel?authuser=0", rating:7.8},
+      {title:"Spongebob The Movie", url:"https://drive.google.com/file/d/11mVla6Y3qLX4pplfnxMavSczJ200_8dl/view", rating:7.1},
+      {title:"Godzilla x Kong: The New Empire (2024)", url:"https://drive.google.com/file/d/134rk6NRYrF-lv0IPYD1Empf14qMSq6h_/view", rating:6.8},
+      {title:"The Wonderfully Weird World of Gumball", url:"https://drive.google.com/drive/u/5/folders/1JjIbHHic30rIG8SBtASYAKTkBnysshAL", rating:8.4},
+      {title:"Sponge On the Run (2021)", url:"https://drive.google.com/file/d/15pAD1QGxR0jFZuO8CAHSUzzp_FEpqvf0/view", rating:6.0},
+      {title:"Mufasa: The Lion King (2024)", url:"https://drive.google.com/file/d/1uQXNlwz-_1PwGdnJqTGUswBhJWgH8zMP/view", rating:7.5},
+      {title:"A Minecraft Movie (2025)", url:"https://drive.google.com/file/d/1FHBn4bOQAAK7eDos_yRqYdtKhgm6uEXl/view", rating:6.8},
+      {title:"JOKER", url:"https://drive.google.com/file/d/1__wCd7uV9s7qY-o7qZ6F1lO9UQPV7B90/view", rating:8.4},
+      {title:"Friday (1995) (alt)", url:"https://drive.google.com/file/d/1SKE9sQ-DnHRRVGxU10Qk2QJ1Ws2jvv5M/view", rating:7.3},
+      {title:"Transformers 1", url:"https://drive.google.com/file/d/1cD5AaH1qXrA3CdlyD6lEJIfspu4FDOD-/view", rating:7.0},
+      {title:"Sonic the Hedgehog 3 (2024)", url:"https://drive.google.com/file/d/13pgT7HSDRXYeXvkU0RAEqbdrHrFxPiIm/preview", rating:7.0},
+      {title:"Venom: The Last Dance", url:"https://drive.google.com/file/d/1ZdhRDJac7D5Q9CXHYdPo_uoQU9aM7Mci/view", rating:6.5},
+      {title:"Ballerina (John Wick) 2025", url:"https://drive.google.com/file/d/1QkggMVcGZDUcJNcAtuI7ZBCDKpb9WWgK/view", rating:6.8},
+      {title:"Invincible", url:"https://sites.google.com/view/cometshower/anime/invincible?authuser=0", rating:8.7},
+      {title:"Captain America: Brave New World", url:"https://drive.google.com/file/d/1pJ5N0z8bQFpqeMx2UrZqrU1526ygzxDm/view", rating:6.5},
+      {title:"Fantastic 4: First Steps (2025)", url:"https://drive.google.com/file/d/1cBhl_4yyqtXZXvTMaAsS3zFBC076lHUe/view", rating:7.9},
+      {title:"Jurassic Park Rebirth", url:"https://drive.google.com/file/d/1x0n_tZPq79HxAnV2ZwnVPTkBenFGZjx-/view", rating:6.8},
+      {title:"Mickey 17 (2025)", url:"https://drive.google.com/file/d/1w0ySmc9Lza6jAdgbxLdVQPd9xtmR_bq0/view", rating:7.2},
+      {title:"Superman (2025)", url:"https://drive.google.com/file/d/1nO646VaJQBN725tPVe9TLFnLBFPJ-jbL/view", rating:7.5},
+      {title:"Free Guy", url:"https://drive.google.com/file/d/1r0kRv4CX2nSBy9zmgClaYxXr0rH3tXti/view", rating:7.1},
+      {title:"Black Phone 2", url:"https://drive.google.com/file/d/1Nnkb35gi9f-jc4LvwVDUq8MTLur7mK3L/view", rating:7.8},
+      {title:"Moana", url:"https://drive.google.com/file/d/1EsX8k7nfYQrzC6apqJqnyfH7HLAHl31G/view?t=2810", rating:7.9},
+      {title:"Bright Burn", url:"https://drive.google.com/file/d/1j1cYjjEDqV8VcTJ3oSwaOeMHPglVd-um/view?t=18", rating:6.2},
+      {title:"Annabelle", url:"https://drive.google.com/file/d/12sQn1gxallBigyxC2aDFUWsKqX_g-e-7/view", rating:5.5},
+      {title:"Texas Chainsaw Massacre", url:"https://drive.google.com/file/d/1DX2PS1WKMKTBCcdwxzbjapo7He1OHTFb/view", rating:4.7},
+      {title:"Teenage Mutant Ninja Turtles: Mutant Mayhem", url:"https://drive.google.com/file/d/1emX4CShNejqhStNK-b0xDVBBMA0t2gcE/view", rating:7.2},
+      {title:"The Wild Robot", url:"https://drive.google.com/file/d/1_N9iHDAM3RbU2a0GTfgcNXDGuZDT_yZ-/", rating:8.4},
+      {title:"Dog Man", url:"https://drive.google.com/file/d/1TgEV9AykxchfLMZ4zB4jJhSKKW5f9xRL/view?usp=drive_link", rating:8.4},
+      {title:"The Nun 2", url:"https://drive.google.com/file/d/1CPZj45zQd1Ih-G0I7Ifo8dACj-4jbOJa/view?usp=drive_link", rating:6.1},
+      {title:"Inside Out", url:"https://drive.google.com/file/d/1e0OdhlzTKWie6TDXNDOKjKYXbfYfmz6t/view?t=3777", rating:8.2},
+      {title:"Fantastic Four First Steps", url:"https://drive.google.com/file/d/1RwaTM1sbgyVZU43JYct_L9vD1QWBzxbc/view", rating:7.9},
+      {title:"Sing", url:"https://drive.google.com/file/d/1-J7v3NOfQxngx50U66dELoa5P17m2xDP/view", rating:7.1},
+      {title:"Diary of a Wimpy Kid: Rodrick Rules", url:"https://drive.google.com/file/d/1rKRsgdNioFs3rtkZai7Gz97FtAX0jdJ_/view", rating:6.3},
+      {title:"Superman 2025 (alt)", url:"https://drive.google.com/file/d/1A61oIlDB8zy0cgj2tJdquKVpaJzl26mr/view?usp=sharing", rating:7.5},
+      {title:"Thor: The Dark World", url:"https://drive.google.com/file/d/10r1UB_bpBRfG8HykNJ2j63nwUawm-3FS/view", rating:6.8},
+      {title:"Ant-Man and The Wasp", url:"https://drive.google.com/file/d/1AstKQ5KLX94k7RFIlsu2St9um8sS_w_M/view", rating:7.0},
+      {title:"Ghost Rider", url:"https://drive.google.com/file/d/1-QiYxJYgk4gw8fRHez7gUWMS6zE7vG-u/view", rating:5.2},
+      {title:"Top Gun: Maverick", url:"https://drive.google.com/file/d/1nmGDHktR96jkaYl2lf-d-XTtNtFh4PTv/view", rating:8.3},
+      {title:"The Little Mermaid", url:"https://drive.google.com/file/d/1sFYkkRX85JK-a2LRl8_QmZPhYkYIn6KG/view", rating:7.2},
+      {title:"Power Rangers", url:"https://drive.google.com/file/d/1bAS1zgiXsYJVXzhra9Fg2PHWBbVDU8lJ/view", rating:6.0},
+      {title:"Ron's Gone Wrong", url:"https://drive.google.com/file/d/1nKl-oBgmnWygnF7xm6CfSWikp22ElVZY/view", rating:7.0},
+      {title:"Turning Red", url:"https://drive.google.com/file/d/1joF2I_zdjepCD9ukmjV672HTICUfp4tO/view", rating:7.0},
+      {title:"Ghostbusters", url:"https://drive.google.com/file/d/1bEzyd2eZSAAoXnVvG7sVuomxZd40TOMS/view?usp=drive_link", rating:7.8},
+      {title:"Plankton: The Movie", url:"https://drive.google.com/file/d/1lWqkPZ9BmdZhhRnrBz2WwcnAoL3Bn6WI/view?usp=drive_link", rating:6.5},
+      {title:"Kingdom Of The Planet Of Apes", url:"https://drive.google.com/file/d/1dZ30bamkNV7OP9bJRF9bscboD9aRYaPY/view", rating:7.2},
+      {title:"Shrek", url:"https://drive.google.com/file/d/1ohXNP73ZyD2VISZZ0aV_rL2MSWskf9NX/view", rating:7.9},
+      {title:"The Mask", url:"https://drive.google.com/file/d/1ExVaSRcps4wvIcRczczvBPSGYxUkfvXE/view?usp=drive_link", rating:6.9},
+      {title:"Twisters", url:"https://drive.google.com/file/d/12UeDOq7tCcbfvEo_EtzkL3Gxho45UOl4/view?resourcekey", rating:7.0},
+      {title:"Charlie And The Chocolate Factory", url:"https://drive.google.com/file/d/1eaQHnnwolzvKHEvs91RO-S2CpNvhmiU5/view?usp=drive_link", rating:6.7},
+      {title:"Santa Buddies", url:"https://drive.google.com/file/d/1XF-bj2OAmSe0MqdlwNWontlMDuFWDDmL/view?usp=drive_link", rating:5.2},
+      {title:"Saving Bikini Bottom with Sandy Cheeks", url:"https://drive.google.com/file/d/17fAM9sipu3BPElFpqFrG3ukYahbUEZQJ/view?usp=drive_link", rating:6.8},
+      {title:"Pet Cemetary", url:"https://drive.google.com/file/d/122OjLQhI6uIS_qThRkLgUcgJh-U7PxBE/view", rating:6.5},
+      {title:"Pokemon Detective Pickachu", url:"https://drive.google.com/open?id=1lbcxI_SXJBrqnxe4GnZYIk5VDhKxCgoF&authuser=0", rating:6.7}
+    ]
+  },
+  {
+    id: "horror", title: "Horror", icon: "fa-skull",
+    items: [
+      {title:"Five Nights at Freddys Movie", url:"https://drive.google.com/file/d/14JD2YQRaI83eFDqb8R1wkYuu5kn3VVoE/view", rating:6.8},
+      {title:"Halloween (Full Movie)", url:"https://drive.google.com/file/d/1dd4z_ykIghvDgVE0YX7v4RK1zfMxH52r/view", rating:7.7},
+      {title:"MORE HORROR", url:"https://docs.google.com/document/d/1V6AQ7WdnbObzgZieAUWtX6Qu-njVGDk1zI3VTA_k7Mc/edit?tab=t.gwkywtxioysr"},
+      {title:"Conjuring The Last Rites", url:"https://drive.google.com/file/d/1DGeZcbS6EeKgAZdmTRr-haezOxenoYRf/view", rating:6.5},
+      {title:"Halloween Kills", url:"https://drive.google.com/file/d/1BxJIkeBcjbsFKWF8myU6tYujMo2G7BJ5/view", rating:5.5},
+      {title:"Halloween Ends", url:"https://drive.google.com/file/d/1SkE7yTrS6RJl2kMDPozhqYPvv96Y4Sp-/view", rating:4.7},
+      {title:"Sinister", url:"https://drive.google.com/file/d/1gklLsp7owMYJ9fGKkhdtBg3EU3OIpJ9n/view", rating:6.8},
+      {title:"Friday the 13th", url:"https://drive.google.com/file/d/1pf3faVonicfbhSDfIviaEWsvKquERczR/view", rating:6.4},
+      {title:"Scream 1 (1996)", url:"https://drive.google.com/file/d/1K0v8NXcyS-ShrwaNpyvQ-1X-RbgUBihO/view", rating:7.4},
+      {title:"Scream 2 (1997)", url:"https://drive.google.com/file/d/1i8w5FlmSFp3hixLRHeodPPtQq5r5VDQh/view", rating:6.3},
+      {title:"MEGAN 2.0", url:"https://drive.google.com/file/d/1QkIGawMXMjf-FQ18o169NPPB8_l-Wx0I/view", rating:6.2},
+      {title:"Scream 3 (2000)", url:"https://drive.google.com/file/d/1IzaFo-PmeI3AiQ_qoDdjCbUdiu8Ohs-w/view", rating:5.7},
+      {title:"Scream 4", url:"https://drive.google.com/file/d/1HfyVEE2oFq1X8dHMWr5xJmMyHo79l7iG/view", rating:6.1},
+      {title:"Scream VI (2023)", url:"https://drive.google.com/file/d/1V7Hzo6Z4n5TJXFKI7tws0ksn-q9aBxzT/view", rating:6.5},
+      {title:"Scream VI (Alt)", url:"https://drive.google.com/file/d/1zLFZE5jEzvjRSAawv9gOk-E5FYhsYblJ/view", rating:6.5},
+      {title:"Child's Play (Theatrical)", url:"https://drive.google.com/file/d/1zmmWMZtvRT3d99hWXDuCSHkdTlBkIOzt/view", rating:6.6},
+      {title:"Child's Play 2", url:"https://drive.google.com/file/d/1IOoeJUBb83Vai480J3iuZsoQSuBC_mnQ/view", rating:5.8},
+      {title:"Bride of Chucky", url:"https://drive.google.com/file/d/1sjzCM6SsEDbb1EzG4noI_rX868nAltcb/view", rating:5.4},
+      {title:"Seed of Chucky", url:"https://drive.google.com/file/d/1cal928G6r3Vth-eqay5mbC3i3a6sWtzS/view", rating:4.9},
+      {title:"Cult of Chucky", url:"https://drive.google.com/file/d/1qPipvrYaINji65Pr6U9Wb8eLXR1PcggX/view", rating:5.3},
+      {title:"It (1990)", url:"https://drive.google.com/file/d/1X4KKLClyHK_yIa_mYqFd4K6s_tvRAD1_/view", rating:6.9},
+      {title:"It (2017)", url:"https://drive.google.com/file/d/1zCYR3RF8IU3x-mkVK6Z0ad80rLdGpwfG/view", rating:7.3},
+      {title:"Straw (2025)", url:"https://drive.google.com/file/d/1HtdcHhPi9Zu05ll4Zn-BhKP6qKmAwobR/view", rating:5.8},
+      {title:"It Chapter Two", url:"https://drive.google.com/file/d/1bJGpdrtp9OdIyvIKxXA5xlsVdV3GeqhS/view", rating:6.5},
+      {title:"The Conjuring", url:"https://drive.google.com/file/d/17VPLw23bmvSYSa7C9fyiB9c3iXB09PNN/view", rating:7.5},
+      {title:"The Conjuring 2", url:"https://drive.google.com/file/d/1zECVNreFAl8LNGcOrlPqtMzw_Su1S3AC/view", rating:7.3},
+      {title:"The Conjuring: Devil Made Me Do It", url:"https://drive.google.com/file/d/1k0tAH--aSS2Ik_xCwr9nJSr1XAS0cFH6/view", rating:6.1},
+      {title:"The Shining (1980)", url:"https://drive.google.com/file/d/1BJ-24OqRAM91ujUu5qJkxFQsoav9yDQU/view", rating:8.4},
+      {title:"Saw (2004)", url:"https://drive.google.com/file/d/1Rhz-BomwJLVXvUbUjsZSMt0SjNDJ01PR/view", rating:7.6},
+      {title:"Saw III", url:"https://drive.google.com/file/d/1KEsCxCI-Fl-7Cb0kDkpFKy6BjObE78NQ/view", rating:6.2},
+      {title:"Saw X", url:"https://drive.google.com/file/d/10Wn3otVUN00Sfc6sRZSnDFfaYDJ5VTNR/view", rating:6.6},
+      {title:"Terrifier 1", url:"https://drive.google.com/file/d/1_pQ3kbz_a8l3B7SKfdP9dYQwKax0WHUD/view", rating:5.6},
+      {title:"Terrifier 2", url:"https://drive.google.com/file/d/1_Jjo7rOcCkYt3UryVkV2XvTfrL4QvHTE/view", rating:6.2},
+      {title:"Terrifier 3", url:"https://drive.google.com/file/d/1sAj4FqfEIzHPIW7ZUPGGSOFTTaJr5AGI/view", rating:6.8},
+      {title:"The Purge (2013)", url:"https://drive.google.com/file/d/1PFz-u8_kVFY8Z--NyloACB1DUwiT0oK4/view", rating:5.7},
+      {title:"The Purge: Anarchy", url:"https://drive.google.com/file/d/1d7FFXzRf0u7L23AqH-HsUua_kA8a_edQ/view", rating:6.4},
+      {title:"The Purge: Election Year", url:"https://drive.google.com/file/d/1TmtXANeLZHYqnxcjn5JsiO2LMi6J7H_z/view", rating:6.0},
+      {title:"The Black Phone", url:"https://drive.google.com/file/d/1ibOSQ1uTdu7_VaEZ0X7KKFpXqB9Rsuzo/view", rating:7.0},
+      {title:"Annabelle", url:"https://drive.google.com/file/d/1WqwxGkOyDRfuo985rc-zmwyMvqu4K-D-/view", rating:5.5},
+      {title:"Annabelle Creation", url:"https://drive.google.com/file/d/15KHQgqhFmRc2zVedlVDqK48zTWq3Xioe/view", rating:6.5},
+      {title:"Annabelle Comes Home", url:"https://drive.google.com/file/d/1_yZ-5-8mqmu4OKD8mzyfRYyLvIE4VqzM/view", rating:5.9},
+      {title:"Grave Encounters", url:"https://drive.google.com/file/d/1yH9xUSy3vawHFb5uRELKGUL25apXjXRs/view", rating:6.1},
+      {title:"Godzilla (1985)", url:"https://drive.google.com/file/d/1pP6Kkr-1WmcWWt2IKEIUv7RTkgMLXTmp/view", rating:6.2},
+      {title:"Imaginary (2023)", url:"https://drive.google.com/file/d/1fuFg1QpZAwYFPh0VOqfhTDxctdqFGbjU/view", rating:6.3},
+      {title:"House of 1000 Corpses", url:"https://drive.google.com/file/d/1byQIJtSqr3urVghq8BnzkbA1PJHIEARc/view", rating:6.1},
+      {title:"The Devil's Rejects", url:"https://drive.google.com/file/d/1GaoJ-lnGHC-E1owpENlfvA9dU6XVMmuR/view", rating:6.7},
+      {title:"3 From Hell", url:"https://drive.google.com/file/d/15R5_6FCePf09QOVJurvRgFrxVlkR84um/view", rating:5.5},
+      {title:"Woman In the Yard", url:"https://drive.google.com/file/d/15LQuHdygSS2ae-STMYx2kGuo3uSRLpYn/view", rating:5.8},
+      {title:"The Exorcist", url:"https://drive.google.com/file/d/1p4TJ6af9UjVh544rHcZ5-JNdfB5YEFo8/view?usp=drive_link", rating:8.1},
+      {title:"The Menu", url:"https://drive.google.com/file/d/14Audx3RqZPMTyLzErPzkKuCQPVWhTC0y/view", rating:7.4},
+      {title:"The First Purge", url:"https://drive.google.com/file/d/1Br63apD1pglhHIvSR2zLJ5p27nAxVG0Z/view?t=1", rating:5.8},
+      {title:"Megan", url:"https://drive.google.com/file/d/1MMl1EYr_OYdc9R-va2IIdPUmkqcj1UpR/view?usp=sharing", rating:6.2},
+      {title:"Freddy VS Jason", url:"https://drive.google.com/file/d/1njTri-d6eamwa3AFwuVD9nORZ7K6-D-N/view?usp=drive_link", rating:5.8},
+      {title:"Jaws Vs Kraken", url:"https://drive.google.com/file/d/16e_h0zUsyFcjJBK-7Ck2OtTOm8DImN39/view?usp=drive_link", rating:4.2}
+    ]
+  },
+  {
+    id: "marvel-dc", title: "Marvel & DC", icon: "fa-bolt",
+    items: [
+      {title:"Iron Man 1", url:"https://drive.google.com/file/d/1QOIBXMPZk86AVo0jI-zXYAuJGiWRUnNg/view", rating:7.9},
+      {title:"Iron Man 2", url:"https://drive.google.com/file/d/1u1glpdPyZvJ1MAgTrxAnTrS8Wvys3Bdt/view", rating:7.0},
+      {title:"Iron Man 3", url:"https://drive.google.com/file/d/1f7AlYvxrURwU7138fr2CzyTmN0qK43rp/view", rating:7.1},
+      {title:"The Avengers (2012)", url:"https://drive.google.com/file/d/1ZPKLQ-m8Wdal2EhtaKUVRZvP3I644kui/view", rating:8.0},
+      {title:"Avengers: Age of Ultron", url:"https://drive.google.com/file/d/1im0w37bz61WkwbQTvP_InTsYwphE6Sxn/view", rating:7.3},
+      {title:"Avengers: Infinity War", url:"https://drive.google.com/file/d/1VWLpj4G4CEgHnjpxfc67MrlEWu5pD75Y/view", rating:8.4},
+      {title:"Avengers: Endgame", url:"https://drive.google.com/file/d/1UsxNtlBxGFp955GwEB-s8wYJCA6bXt7e/view", rating:8.4},
+      {title:"Ant-Man And The Wasp", url:"https://drive.google.com/file/d/1TlXuvpOkfd8k1eEyOLwSHUJzf6R40ytM/view", rating:7.0},
+      {title:"Black Panther", url:"https://drive.google.com/file/d/1GdMksUpH7ghCBF1j4sEmJU9hmZ3pPpkn/view", rating:7.3},
+      {title:"Deadpool 1", url:"https://drive.google.com/file/d/1drXS4b8XjDqgQ6tIjbS7RCN1Yq8CjDLZ/view", rating:8.0},
+      {title:"Deadpool 2", url:"https://drive.google.com/file/d/1wcE3D19t54BnWtLNl5cruklfPVPh92nY/view", rating:7.6},
+      {title:"Guardians of the Galaxy 1", url:"https://drive.google.com/file/d/1OVLVnfQs3uKyVMmvKDJB9e0YzJAtmIP1/view", rating:8.0},
+      {title:"Guardians of the Galaxy 2", url:"https://drive.google.com/file/d/1hyMj87AjFUk07FI0fDHLvjXiiwwY_WJS/view", rating:7.6},
+      {title:"Guardians of the Galaxy 3", url:"https://drive.google.com/file/d/1pFavPs7Mi9rx_BrAjxbeHNWg7ClAB2_K/view", rating:8.0},
+      {title:"The Amazing Spider-Man 1", url:"https://drive.google.com/file/d/1jom1D1Dc3eF3ZmCXVzh8lhlXrFGOBpXK/view", rating:6.9},
+      {title:"The Amazing Spider-Man 2", url:"https://drive.google.com/file/d/1bQpgzMav6AHi3UYnAagHPsGyraC0GWK_/view", rating:6.5},
+      {title:"Spider-Man: Homecoming", url:"https://drive.google.com/file/d/16nP21GFh_p9LNNW59oX2pMmTznKV43K4/view", rating:7.4},
+      {title:"Spider-Man: Far from Home", url:"https://drive.google.com/file/d/1YFUpSLmxb6xIlbdJXScIkRYvwYxvJ_18/view", rating:7.4},
+      {title:"Spider-Man: No Way Home", url:"https://drive.google.com/file/d/1oddQM8w-8UqQIvB-fPpy1h-7xvAbklmA/view", rating:8.4},
+      {title:"Spider-Man: Into The Spider-Verse", url:"https://drive.google.com/file/d/1V3Bq0lrDQUxJay5DDs3gK69ZvRNb1j2u/view", rating:8.4},
+      {title:"Spider-Man: Across The Spider-Verse", url:"https://drive.google.com/file/d/1Sd1l_LhKRp_2OE5gRJJyPubnZjJccLgQ/view", rating:8.7},
+      {title:"Spider-Man (2002)", url:"https://drive.google.com/file/d/14BaJhmDRr3veoH436CKdPDp9r-j5214I/view", rating:7.4},
+      {title:"Spider-Man 2 (2004)", url:"https://drive.google.com/file/d/1yV7ZmEkfOVOLdV51wN6vSeDf3_tQqBvf/view", rating:7.5},
+      {title:"Spider-Man 3 (2007)", url:"https://drive.google.com/file/d/1ExTfRPC3YGmCSg8W2uFSYkUMw7a1vcTR/view", rating:6.2},
+      {title:"X-Men: Apocalypse", url:"https://drive.google.com/file/d/1XOhalDbPc-27oTHBEoiQCRjsXrktB4aY/view", rating:6.9},
+      {title:"Venom (2018)", url:"https://drive.google.com/file/d/1XoN0B1rsNKDDRphmI8bM606r4wRQ6JUH/view", rating:6.6},
+      {title:"Venom: Let There Be Carnage", url:"https://drive.google.com/file/d/13d5gq3Kx3koobcfRTVyH9Hhum3s8Fxag/view", rating:5.9},
+      {title:"Shazam!", url:"https://drive.google.com/file/d/1u5u_-G0KReiP4Q4eHvx7qwb4jv6ZARdh/view", rating:7.0},
+      {title:"Shazam! Fury of the Gods", url:"https://drive.google.com/file/d/1LC17KNt1pxG1zJ43CwIBNGXaCN3cmLPc/view", rating:6.0},
+      {title:"The Flash (2023)", url:"https://drive.google.com/file/d/1ApUHMkZM-j3vM-rSG-kvjk3KuvJNAsXp/view", rating:6.7},
+      {title:"Blue Beetle (2023)", url:"https://drive.google.com/file/d/1T2XMXtDAlohPcGdi-u2p9zXF9Os9zkY1/view", rating:6.7},
+      {title:"Superman (2025)", url:"https://drive.google.com/file/d/1m2m6kudeN5pivaeCWfMR88xXEyZg8nFK/view", rating:7.5},
+      {title:"Black Adam", url:"https://drive.google.com/file/d/1B-Kb1tedWlkMlBWpDj8S42HfjLFUUVR0/view?usp=drivesdk", rating:6.1}
+    ]
+  },
+  {
+    id: "animation-kids", title: "Animation & Kids", icon: "fa-gamepad",
+    items: [
+      {title:"Disney", url:"https://docs.google.com/presentation/d/1r9J-gGLjBQIggjVvz-tf_6PVHcotcYwz18Fcv7Jdd1g/edit?slide=id.p"},
+      {title:"KPOP Demon Hunters", url:"https://drive.google.com/file/d/1zT4SAUoKx29aoNVS3scuTMvTqyNgMQ7E/view"},
+      {title:"Bad Guys 2", url:"https://drive.google.com/file/d/18As-PyI9E5z5iYu2ns3meSiusKI9KLEv/view"},
+      {title:"The Legend of the 10 Rings", url:"https://drive.google.com/file/d/1xBiVuAnW0hFxIhG3samjzJJ-czMAKxN0/view", rating:7.8},
+      {title:"The Little Mermaid", url:"https://drive.google.com/file/d/1sFYkkRX85JK-a2LRl8_QmZPhYkYIn6KG/view", rating:7.2},
+      {title:"Ron's Gone Wrong", url:"https://drive.google.com/file/d/1nKl-oBgmnWygnF7xm6CfSWikp22ElVZY/view", rating:7.0},
+      {title:"Toy Story 1", url:"https://drive.google.com/file/d/1fW6Ov5NIaRh4h78-qBpWeln_Vs9oEXOQ/view", rating:8.3},
+      {title:"Wicked (2024)", url:"https://drive.google.com/file/d/1EiT5_VDJyMbrG5ezazVyzzOu1nWAkmE8/view", rating:7.8},
+      {title:"Toy Story 2", url:"https://drive.google.com/file/d/1k3RVDc_Vah1H9lFsXQZJ6mE3KqdDcK_T/view", rating:7.9},
+      {title:"Toy Story 3", url:"https://drive.google.com/file/d/13msxxmyEco7CRBkO_Ju1SMx5KK4r4Su8/view", rating:8.3},
+      {title:"Zootopia", url:"https://drive.google.com/file/d/1HYeIrbf8A-vfvJsvYP59AQzG9l8nt03h/view", rating:8.0},
+      {title:"Toy Story 4", url:"https://drive.google.com/file/d/1bFUbsQ9VEazeCt5l_VBVDtjCsbJmZ_Vr/preview", rating:7.7},
+      {title:"Shrek 1", url:"https://drive.google.com/file/d/1ps_r1YV8y5h93_mUu4OFlPVVkPzT0Rui/view", rating:7.9},
+      {title:"Shrek 2", url:"https://drive.google.com/file/d/1Ft-mWElx-1rZzIXJBswt_HQ-1VrZ4th2/view", rating:7.4},
+      {title:"Shrek 3", url:"https://drive.google.com/file/d/1qhxQw4uC6aO1KN0UZrybu1YY1vdtBwmM/view", rating:6.1},
+      {title:"Shrek Forever After", url:"https://drive.google.com/file/d/1xN-pzN1CePUsWHTmd9O--cOA-X_gqzQg/view", rating:6.3},
+      {title:"Sonic the Hedgehog 1", url:"https://drive.google.com/file/d/1HaXeNylNfZXhRudGTNLUWtrN-oAmone4/view", rating:6.5},
+      {title:"Sonic the Hedgehog 2", url:"https://drive.google.com/file/d/13YPdlfR1BTzXfqwmfbzfiuPycjQsh0Yb/view", rating:6.7},
+      {title:"Bee Movie", url:"https://drive.google.com/file/d/1AiuhAubyrKVmqpu3OfM1sonhRJrzw5v6/view", rating:6.1},
+      {title:"Avatar", url:"https://drive.google.com/file/d/16tKuEYtxi7EeKtX3yZZR-nXgZ_oGTxXS/view", rating:7.9},
+      {title:"Alvin and the Chipmunks 1", url:"https://drive.google.com/file/d/1uCRRJZj1GAaweX996uHbF2zxPoessmGW/view", rating:5.2},
+      {title:"Alvin and the Chipmunks: Squeakuel", url:"https://drive.google.com/file/d/1em55qHTtdrWD4Dox9CXs9r1042TLu_cu/view", rating:4.5},
+      {title:"Alvin and the Chipmunks: Chipwrecked", url:"https://drive.google.com/file/d/1LTKy48IbusfXsl5nSNDTd0M3A8B3aPke/view", rating:4.4},
+      {title:"Despicable Me 1", url:"https://drive.google.com/file/d/1upRWBqPKcQjviBjAgYkzkWZuVjQ1SAWF/view", rating:7.6},
+      {title:"Despicable Me 2", url:"https://drive.google.com/file/d/1qWNcu7uPAUqh0SaBlL4rEhcH1QaKIfgf/view", rating:7.3},
+      {title:"Despicable Me 3", url:"https://drive.google.com/file/d/1mT5BU-DLMI0kDVjEIk7kBNL55ETuNyGN/view", rating:6.2},
+      {title:"Despicable Me 4 (2024)", url:"https://drive.google.com/file/d/1ggXkdigLOzQQgelB8exwzjVFb8bbef7d/view", rating:6.4},
+      {title:"Minions", url:"https://drive.google.com/file/d/1Wz1VPwDHWA3t8n54e-YpRM18ad1mQuSG/view", rating:6.4},
+      {title:"Minions: Rise of Gru", url:"https://drive.google.com/file/d/1lrJNkBON3H_5n8lF3WKCaUT6AUl9qbh4/view", rating:6.6},
+      {title:"Kung Fu Panda 1", url:"https://drive.google.com/file/d/1cPYsXfP2YqdtUNnqXg3ycANRQQOuVOmR/view", rating:7.6},
+      {title:"Kung Fu Panda 2", url:"https://drive.google.com/file/d/19Iz7pU-A9RUMHe6q1I9faYi02ht5MwbT/view", rating:7.2},
+      {title:"Kung Fu Panda 3", url:"https://drive.google.com/file/d/1lfSnf9FQoB1xyeDJxEEh5JSG4ocnmqgx/view", rating:7.1},
+      {title:"Kung Fu Panda 4 (2024)", url:"https://drive.google.com/file/d/19e3HaItYsMHMCjHE0HD78-GsG1rbftJl/view", rating:6.7},
+      {title:"Madagascar 1", url:"https://drive.google.com/file/d/1TvrE3-T2tdfFhmEdhG_-NJlGNMnhHt2J/view", rating:6.9},
+      {title:"Madagascar 2", url:"https://drive.google.com/file/d/1uNRfbrFF8al6BtxKkXWhuq-DeMVd9NZn/view", rating:6.6},
+      {title:"Madagascar 3", url:"https://drive.google.com/file/d/1W4aM_WbjjxTlE_f5zcKPYZ5pNOym_W8K/view", rating:6.8},
+      {title:"A Bug's Life", url:"https://drive.google.com/file/d/1AIq4OqiMWiY9zZSayF5VID7pfTwSH6BM/view", rating:7.2},
+      {title:"Hotel Transylvania 1", url:"https://drive.google.com/file/d/1gZ4FVX5GLCSv2-i_sabXWhgl9u_3FeOB/view", rating:7.0},
+      {title:"Hotel Transylvania 2", url:"https://drive.google.com/file/d/1LZI5E52J_R_Cx6f3EXLl-BAn6vuhUduD/view", rating:6.7},
+      {title:"Hotel Transylvania 3", url:"https://drive.google.com/file/d/1aS3rHee1w5zNTGGmSFM57DSVlC1hSvIs/view", rating:6.3},
+      {title:"Hotel Transylvania 4", url:"https://drive.google.com/file/d/1_Ujbv8ONdcmV8TrYw8WzTwdD93deiiZp/view", rating:6.4},
+      {title:"The Emperor's New Groove", url:"https://drive.google.com/file/d/1PHoIOxNpcaymH5qGJABEK9pJw-gO8lIx/view", rating:7.4},
+      {title:"Ratatouille", url:"https://drive.google.com/file/d/1kjVDdXtZ3-O0SndMHeIwMXe4jNZJ4w2C/view", rating:8.1},
+      {title:"Avatar (2009)", url:"https://drive.google.com/file/d/16tKuEYtxi7EeKtX3yZZR-nXgZ_oGTxXS/view", rating:7.9},
+      {title:"The Lorax", url:"https://drive.google.com/file/d/1gdwI2JzBioxG5X6ewvaG2mcMeCUW346o/view", rating:6.4},
+      {title:"Home Alone 1", url:"https://drive.google.com/file/d/1AOuPlJ9PfNSI1CuulCwvtSXHfj92sBqI/view", rating:7.7},
+      {title:"Home Alone 2", url:"https://drive.google.com/file/d/13wAOplYsKnssaM4MVRprZ4B1XCtl-rpk/view", rating:6.8},
+      {title:"Home Alone 3", url:"https://drive.google.com/file/d/1AUuPlJ9PfNSI1CuulCwvtSXHfj92sBqI/view", rating:4.7},
+      {title:"Finding Nemo", url:"https://drive.google.com/file/d/11CN0fT7CwCHgz__mY4FWjcoT5w_wZD9S/view", rating:8.2},
+      {title:"Finding Dory", url:"https://drive.google.com/file/d/1uDOp65KtEnID520JjNC_kMOm91mNfGq6/view", rating:7.3},
+      {title:"The Boss Baby 1", url:"https://drive.google.com/file/d/1gdwI2JzBioxG5X6ewvaG2mcMeCUW346o/view", rating:6.3},
+      {title:"Spider-Man: Across the Spider-Verse", url:"https://drive.google.com/file/d/1dSeZ1c4_p8T_lW7z0qpKsebKYN-R3zHR/view", rating:9.1},
+      {title:"Barbie", url:"https://drive.google.com/file/d/1K88LvZ6q9KRwsdiVQ72Wrh5DQqWVLkd3/view?usp=sharing", rating:6.8},
+      {title:"WALL-E", url:"https://drive.google.com/file/d/1GHmi5ow0z_UXxHrbv6v9puDanjgKm_UI/view", rating:8.4},
+      {title:"Kung Fu Panda 4", url:"https://drive.google.com/file/d/1hhDIibpC8PMANtGqPHjIVL1y1NbQVJzJ/view?usp=sharing", rating:6.0}
+    ]
+  },
+  {
+    id: "action-crime", title: "Action & Crime", icon: "fa-bomb",
+    items: [
+      {title:"Dexter", url:"https://drive.google.com/drive/folders/1tS1nfpGotsimzKQRf0iqA5N0jaYe_JPv", rating:8.7},
+      {title:"The Naked Gun", url:"https://drive.google.com/file/d/1d99PsLSstcm8bo4_qRhSdtjulSTSgl9o/view", rating:7.6},
+      {title:"Wake Up Dead Man", url:"https://drive.google.com/file/d/1wDuHpJp9ptvfIk6gcSvctYoOPdrZ-m-t/view", rating:7.8},
+      {title:"The Shadow Edge", url:"https://drive.google.com/file/d/17ppS1b-nnEVLdbLeL-t4E-ye2PVbhfni/view", rating:6.5},
+      {title:"Stand Your Ground", url:"https://drive.google.com/file/d/1TpARoCL_gp5jkA2jWS5nmyezPinKQuFp/view", rating:6.2},
+      {title:"Hunting Season", url:"https://drive.google.com/file/d/1e4mBkx_NTofy1nV7H6Wsnwoziox445ne/view", rating:5.8},
+      {title:"Top Gun: Maverick", url:"https://drive.google.com/file/d/1nmGDHktR96jkaYl2lf-d-XTtNtFh4PTv/view", rating:8.3},
+      {title:"John Wick: The Complete Series", url:"https://drive.google.com/drive/folders/1wXahSAR89rLzwwc0lC-PwkWwV-yGLdlo", rating:8.2},
+      {title:"John Wick Chapter 2", url:"https://drive.google.com/file/d/1gzsZEVTNEb93tSa0nuzlpR2n20D4Dyx9/view?t=3", rating:7.5},
+      {title:"John Wick", url:"https://drive.google.com/file/d/1X9Kflcg0LuRjceV6JghCzs49px8cRTIk/view", rating:7.4},
+      {title:"Bad Boys 2", url:"https://drive.google.com/file/d/0B1NibQe1vz3LVDFDVjk3VWtGUjA/view?usp=drive_open&resourcekey=0-zWX_T4zfMroDG2D_yVmVFg", rating:6.6},
+      {title:"Pacific Rim 2", url:"https://drive.google.com/file/d/1BHU65siN3GF1vj_JFO66qjS-9K3j_1MH/view?usp=drivesdk", rating:5.6}
+    ]
+  },
+  {
+    id: "tv-shows", title: "TV Shows", icon: "fa-tv",
+    items: [
+      {title:"Family Guy", url:"https://drive.google.com/drive/folders/11W6C-Jqv9iQVasqjfiaYz77puax1UTjH?usp=drive_link", rating:8.2},
+      {title:"Teen Titans", url:"https://drive.google.com/drive/folders/1xqItOklvgleKL0ly9SNd1mClelBlNgPs?usp=drive_link", rating:8.5},
+      {title:"Squid Game All Seasons", url:"https://drive.google.com/drive/folders/1Zs2H3Nxl-yQHm21RJNbh2bIAesJ5ouY", rating:8.3},
+      {title:"Breaking Bad", url:"https://drive.google.com/drive/folders/1FnMjttr2xj9HZfypWbN4L8FlqJyz9LUs", rating:9.5},
+      {title:"Adventure Time", url:"https://drive.google.com/drive/folders/1OwoKydzUQUUp6n-Nh7CCAQXGLfchU8Ta", rating:8.6},
+      {title:"Live TV - Featured Systems", url:"https://drive.google.com/drive/folders/1LRAuy2ORadxBAqHT5VRT5RBKBKkM6fCF"},
+      {title:"Ninjago", url:"https://drive.google.com/folderview?id=15GtJc8NKaGoZyPoRXcJjTs6ZSQfKJ-xb", rating:7.8},
+      {title:"Rick and Morty", url:"https://drive.google.com/drive/folders/1EhzdG061fossyvUWpAWzDB_b6WhAWvbS?dmr=1&ec=wgc-drive-hero-goto", rating:9.1},
+      {title:"The Simpsons", url:"https://drive.google.com/drive/folders/1ZtFBjPAE-qVzdHJ3EKnvlBFNhux5m3Hi?usp=drive_link", rating:8.7},
+      {title:"South Park", url:"https://drive.google.com/drive/folders/1PzKaoaK4blzlaoxnwC20gZoeYE5mDxWL?usp=drive_link", rating:8.2},
+      {title:"Everybody Hates Chris", url:"https://drive.google.com/drive/folders/1RUZj9WQzdEBYYLeKhD_Y9GRcZbNZMSEy", rating:8.0},
+      {title:"The Regular Show", url:"https://drive.google.com/drive/folders/1tedaT2-lJvdIToqgsBx7lDo4tJl3TY-U?usp=drive_link", rating:8.6},
+      {title:"Smiling Friends", url:"https://drive.google.com/drive/u/1/folders/1px8IK0jaSlqj3fK-yawRwD0aQD4pXGld", rating:8.5},
+      {title:"The Amazing Digital Circus", url:"https://drive.google.com/drive/folders/1OPRfaVkM8MPcLLXmjAa24krAZCr0kHEO?usp=drive_link", rating:8.8},
+      {title:"SpongeBob SquarePants", url:"https://drive.google.com/drive/folders/1cOFMumtLFERJqS6Y5oTyBb6ZRXNHCgZF?usp=drive_link", rating:8.2},
+      {title:"Outer Banks", url:"https://drive.google.com/drive/folders/1-2GIqLddtiou6bcJ9pUfVkZhUk_VnGML", rating:7.6},
+      {title:"Murder Drones", url:"https://drive.google.com/drive/folders/1QAiFXO6iG-IB2A2oGModfBP74aVHa6S8?usp=drive_link", rating:8.3},
+      {title:"Hey Arnold!", url:"https://drive.google.com/drive/folders/1tvjU4AqKfPOM_wPZA-pJsjYaOKguNaDD", rating:8.2},
+      {title:"Gravity Falls", url:"https://drive.google.com/drive/folders/0B2lfcnXrxDFsUHl1OHdVc0pnWUU?resourcekey=0-14k0yy6znJA05TWl8GyMHw", rating:8.9},
+      {title:"The Cleveland Show", url:"https://drive.google.com/drive/folders/1Yini_uXuxwQzlYqOX447QK2GQis52bxa?usp=drive_link", rating:6.5},
+      {title:"Young Sheldon", url:"https://drive.google.com/drive/folders/1oFvmFIdi3tkfM_RB56p41lch86YEeg-d", rating:7.5},
+      {title:"Danny Phantom", url:"https://drive.google.com/drive/folders/1iZZSfbqgfu8YDIP-5g8qp8XQ4al5WrDC", rating:8.1},
+      {title:"Cobra Kai", url:"https://drive.google.com/drive/folders/1iDvFUcwl4WvgAQgjPjrMDBarJ_I2NCSK", rating:8.6},
+      {title:"Shameless", url:"https://drive.google.com/drive/folders/1dY6CivPkpyzvHJVWQUFr57DDpd1tfsFy?usp=sharing", rating:8.6},
+      {title:"The Last Of Us (show)", url:"https://drive.google.com/drive/folders/12hjbl3XZmVF1WFsjWuiCMJ9USmenFV3L", rating:8.9}
+    ]
+  },
+  {
+    id: "anime", title: "Anime", icon: "fa-dragon",
+    items: [
+      {title:"Dragon Ball Z", url:"https://drive.google.com/drive/folders/1jOWTtXX3VqcJElQqovEvP5QTWCfgXLBS", rating:8.7},
+      {title:"Attack On Titan 1-4", url:"https://drive.google.com/drive/folders/1WUWO12Vnws_H4yhSIKn_I1PY3W0j7NbB?usp=drive_link", rating:9.1},
+      {title:"The Boondocks", url:"https://drive.google.com/drive/folders/1ujarzaX_90FGOiRC15OmXOAgwSbdI_kA", rating:8.4},
+      {title:"Death Note", url:"https://drive.google.com/drive/folders/1LNhG5Hjk4p9eJqvt0ooEpyAqnQRzJwYE", rating:9.0},
+      {title:"Demon Slayer", url:"https://drive.google.com/drive/folders/1mmBVdj-oKIC0aSdOcMcEnQ129-rKimKo", rating:8.7},
+      {title:"Naruto", url:"https://drive.google.com/drive/folders/1dHK5v5NZNiDvlQ9VK06AAPFNngnkkQCZ", rating:8.4},
+      {title:"Chainsaw Man", url:"https://drive.google.com/drive/folders/1juWFikMtGg4X-Ju9QVb-n0MSQOQvmIbg", rating:8.6},
+      {title:"Invincible", url:"https://drive.google.com/drive/folders/1xewFLZCNhjF5DtQDM5VxDic7ClprMjal?usp=drive_link", rating:8.7},
+      {title:"One Punch Man", url:"https://drive.google.com/drive/folders/1yGjMeMX0_1vUHa6XbpszYGe5yLqYLKRc", rating:8.9},
+      {title:"Blue Lock", url:"https://drive.google.com/drive/folders/1L_4PmRvkuqYsvLQSzMuaqRVDQg2pb9Z6", rating:8.3},
+      {title:"Baki Hanma Season 2", url:"https://drive.google.com/drive/folders/1VL7AmdU7-Ad8SdvwSUS583sy1Sy_byxv", rating:7.8},
+      {title:"Chainsaw Man (alt)", url:"https://drive.google.com/drive/folders/14ES_2SDXFRV6n1FU880Hk8en7BMkOC_3", rating:8.6},
+      {title:"Assassination Classroom", url:"https://drive.google.com/drive/u/5/folders/1T-JYKyNVjYjwzEmTDr6kErnlSlnT-I2X", rating:8.7},
+      {title:"My Hero Academia Season 1", url:"https://drive.google.com/drive/folders/1v8BMG58ZRYNIWSgIxxHezBSCc11XIBIv", rating:8.6},
+      {title:"Avatar: The Last Airbender", url:"https://drive.google.com/file/d/1x84uwAQzm7-j9MhDdNF5sb_jCRQFhjIa/view?usp=drive_link", rating:9.3},
+      {title:"Jujutsu Kaisen", url:"https://drive.google.com/drive/folders/1eqNcKK02wEdRV7RnfrmDRZf2s2QZHUyj", rating:8.8},
+      {title:"Beast Games", url:"https://drive.google.com/drive/folders/1Q8_n0CTVT3eUg_mZe-10NDYnJl9p-9w7", rating:7.5},
+      {title:"The Boys", url:"https://drive.google.com/drive/folders/1ezBjEruHXUq-cV5YGJK-WvXMUjbqNyCx", rating:8.7}
+    ]
+  }
+];
 
-        // ---- search (unchanged) ----
-        const searchBar = document.getElementById('searchBar');
-        searchBar.addEventListener('input', () => {
-            const filter = searchBar.value.toUpperCase();
-            document.querySelectorAll('.movie-card').forEach(card => {
-                const text = card.textContent.toUpperCase();
-                card.style.display = text.includes(filter) ? '' : 'none';
-            });
+// ============================================================
+// RENDER
+// ============================================================
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function renderSidebar() {
+    const list = document.getElementById('categoryList');
+    list.innerHTML = SECTIONS.map((sec, i) => `
+        <li>
+            <button data-target="section-${sec.id}" class="${i === 0 ? 'active' : ''}">
+                <i class="fas ${sec.icon}"></i> ${escapeHTML(sec.title)}
+            </button>
+        </li>
+    `).join('');
+
+    list.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = document.getElementById(btn.dataset.target);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            list.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         });
+    });
+}
 
-        // ---- (optional) any remaining links without target="_blank" get it ----
-        // but we already added target="_blank" to every movie link in the HTML.
-        // This is just a safety net.
-        document.querySelectorAll('.movie-card a:not([target="_blank"])').forEach(link => {
-            // Only for movie cards — skip the disabled page2 button etc.
-            link.setAttribute('target', '_blank');
+function renderSections() {
+    const container = document.getElementById('sections');
+    container.innerHTML = SECTIONS.map(sec => `
+        <section class="category-section" id="section-${sec.id}">
+            <h2 class="category-header"><i class="fas ${sec.icon}"></i> ${escapeHTML(sec.title)}</h2>
+            <div class="movie-grid">
+                ${sec.items.map(item => `
+                    <div class="movie-card">
+                        <a href="${escapeHTML(item.url)}" data-title="${escapeHTML(item.title)}" target="_blank" rel="noopener">
+                            ${escapeHTML(item.title)}${item.rating ? `<span class="rating">${item.rating}</span>` : ''}
+                        </a>
+                    </div>
+                `).join('')}
+            </div>
+        </section>
+    `).join('');
+}
+
+renderSidebar();
+renderSections();
+
+// ---- search ----
+const searchBar = document.getElementById('searchBar');
+const emptyState = document.getElementById('emptyState');
+
+searchBar.addEventListener('input', () => {
+    const filter = searchBar.value.trim().toUpperCase();
+    let anyVisible = false;
+
+    document.querySelectorAll('.category-section').forEach(section => {
+        let sectionHasMatch = false;
+        section.querySelectorAll('.movie-card').forEach(card => {
+            const title = card.querySelector('a').dataset.title.toUpperCase();
+            const match = title.includes(filter);
+            card.style.display = match ? '' : 'none';
+            if (match) sectionHasMatch = true;
         });
+        section.style.display = (filter === '' || sectionHasMatch) ? '' : 'none';
+        if (sectionHasMatch || filter === '') anyVisible = true;
+    });
 
-        // ---- the overlay is no longer used, but we keep the DOM intact ----
-        // The CSS has #videoPlayerOverlay { display: none !important; }
-        // so it will never appear.
-        console.log('🎬 Ghost Hub · All movies open in new tabs!');
-    </script>
+    emptyState.style.display = anyVisible ? 'none' : 'block';
+});
+</script>
 
 </body>
 </html>
