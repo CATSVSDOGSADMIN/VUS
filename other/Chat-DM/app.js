@@ -5312,7 +5312,7 @@ function initChatRoomUI() {
   updatePingYouButtonState();
   preloadPingSound();
 
-  $chatRoomEmptyState.style.display = "flex";
+  $emptyState.style.display = "flex";
   updateCharCounter();
 
   enterChatRoomAsCurrentAccount();
