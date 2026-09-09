@@ -1,5 +1,4 @@
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
     background: #0f172a;
@@ -817,15 +816,6 @@
   }
 
   /* ══════════ CHAT ROOM STYLES (from VUS-Chat, merged) ══════════ */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body {
-    background: #0f172a;
-    color: #f1f5f9;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-  }
   .chat-header {
     padding: 18px 21px;
     display: flex;
