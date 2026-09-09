@@ -25,6 +25,7 @@ const SESSION_STORAGE_KEY = "dmAppSession";
 const GC_MAX_MEMBERS = 20;
 const SEND_DELAY_MS = 2000;
 const TYPING_TIMEOUT_MS = 4000; // how long a typing flag lives before auto-expiring
+const IMAGE_TTL_MS = 3 * 24 * 60 * 60 * 1000; // 3 days — images past this get swept (see IMAGE SWEEP below)
 
 let db = null;
 let usersRef = null, usernameIndexRef = null, idIndexRef = null;
@@ -407,7 +408,7 @@ async function sendDirectMessage(otherAccountKey, text, imageData, replyTo) {
     await pushRef.set({
       fromAccountKey: currentSession.accountKey,
       ...(clean ? { text: clean } : {}),
-      ...(imageData ? { imageData: imageData } : {}),
+      ...(imageData ? { imageData: imageData, imageExpiresAt: Date.now() + IMAGE_TTL_MS } : {}),
       ...(replyTo ? { replyTo: replyTo.id, replyToLabel: replyTo.fromLabel, replyToSnippet: replyTo.snippet } : {}),
       ts: firebase.database.ServerValue.TIMESTAMP
     });
@@ -606,7 +607,7 @@ async function sendGroupMessage(gcId, text, imageData, replyTo) {
   try {
     await groupChatsRef.child(gcId).child("messages").push({
       fromAccountKey: currentSession.accountKey, fromUsername: currentSession.username,
-      ...(clean ? { text: clean } : {}), ...(imageData ? { imageData: imageData } : {}),
+      ...(clean ? { text: clean } : {}), ...(imageData ? { imageData: imageData, imageExpiresAt: Date.now() + IMAGE_TTL_MS } : {}),
       ...(replyTo ? { replyTo: replyTo.id, replyToLabel: replyTo.fromLabel, replyToSnippet: replyTo.snippet } : {}),
       ts: firebase.database.ServerValue.TIMESTAMP
     });
@@ -659,6 +660,78 @@ function watchMyGroupChats(onList) {
   });
 }
 function unwatchMyGroupChats() { groupChatsRef.off("value"); }
+
+/* ══════════════════════════════════════════════════════════
+   IMAGE SWEEP — client-side TTL cleanup. No backend, so this only
+   runs when someone with the app open triggers it: once per login,
+   scanning every DM thread the current user could have (derived
+   from their friends list — DM thread IDs are deterministic, see
+   threadIdFor) plus every group chat they belong to. Each pass nulls
+   out imageData on any message whose imageExpiresAt is in the past,
+   sets imageExpired: true so it renders as "[image expired]" instead
+   of a broken image forever, and leaves everything else on the
+   message untouched (text, reactions, ts, etc. survive).
+   A stale thread nobody opens keeps its images until someone with
+   that thread visible logs in — there's no server sweeping in the
+   background. That's the accepted tradeoff for staying backend-free.
+   ══════════════════════════════════════════════════════════ */
+const IMAGE_SWEEP_KEY = "vusLastImageSweep";
+const IMAGE_SWEEP_MIN_INTERVAL_MS = 60 * 60 * 1000; // don't re-sweep more than once/hour per session
+
+async function sweepExpiredImagesInScope(scopeRef) {
+  try {
+    const snap = await scopeRef.child("messages")
+      .orderByChild("imageExpiresAt")
+      .endAt(Date.now())
+      .get();
+    const val = snap.val();
+    if (!val) return;
+    const updates = {};
+    Object.entries(val).forEach(([messageId, msg]) => {
+      if (msg && msg.imageData && typeof msg.imageExpiresAt === "number" && msg.imageExpiresAt <= Date.now()) {
+        updates[messageId + "/imageData"] = null;
+        updates[messageId + "/imageExpired"] = true;
+      }
+    });
+    if (Object.keys(updates).length > 0) {
+      await scopeRef.child("messages").update(updates);
+    }
+  } catch (e) {
+    // Best-effort — a failed sweep just means those images live a
+    // little longer, not a functional break for the person using the app.
+  }
+}
+
+async function sweepAllMyImages() {
+  if (!currentSession || !currentUserData) return;
+
+  const friendKeys = Object.keys(currentUserData.friends || {});
+  const dmSweeps = friendKeys.map(friendKey =>
+    sweepExpiredImagesInScope(dmsRef.child(threadIdFor(currentSession.accountKey, friendKey)))
+  );
+
+  let groupSweeps = [];
+  try {
+    const gcSnap = await groupChatsRef.get();
+    const gcVal = gcSnap.val() || {};
+    const myGroupIds = Object.entries(gcVal)
+      .filter(([, gc]) => gc.members && gc.members[currentSession.accountKey])
+      .map(([gcId]) => gcId);
+    groupSweeps = myGroupIds.map(gcId => sweepExpiredImagesInScope(groupChatsRef.child(gcId)));
+  } catch (e) {
+    groupSweeps = [];
+  }
+
+  await Promise.all([...dmSweeps, ...groupSweeps]);
+}
+
+function maybeRunImageSweep() {
+  let lastRun = 0;
+  try { lastRun = Number(localStorage.getItem(IMAGE_SWEEP_KEY)) || 0; } catch (e) {}
+  if (Date.now() - lastRun < IMAGE_SWEEP_MIN_INTERVAL_MS) return;
+  try { localStorage.setItem(IMAGE_SWEEP_KEY, String(Date.now())); } catch (e) {}
+  sweepAllMyImages();
+}
 
 /* ══════════════════════════════════════════════════════════
    IMAGES — unchanged compression pipeline.
@@ -1663,6 +1736,10 @@ function renderChatMessage(msg) {
     bubble.style.fontStyle = "italic";
     bubble.style.opacity = "0.6";
     bubble.textContent = "This message was deleted";
+  } else if (msg.imageExpired && !msg.imageData) {
+    bubble.style.fontStyle = "italic";
+    bubble.style.opacity = "0.6";
+    bubble.textContent = msg.text ? "[image expired] " + msg.text : "[image expired]";
   } else if (msg.imageData) {
     const img = h("img", { className: "chat-msg-image", alt: "Image", onclick: () => {
       $imageLightboxImg.src = msg.imageData;
@@ -1721,6 +1798,9 @@ function updateRenderedMessage(msg) {
     bubble.textContent = "This message was deleted";
     const editBtn = el.querySelector('button[title="Edit"]');
     if (editBtn) editBtn.remove();
+  } else if (msg.imageExpired && !msg.imageData) {
+    bubble.style.fontStyle = "italic"; bubble.style.opacity = "0.6";
+    bubble.textContent = msg.text ? "[image expired] " + msg.text : "[image expired]";
   } else if (!msg.imageData) {
     bubble.innerHTML = linkify(esc(msg.text || ""));
   }
@@ -2010,7 +2090,11 @@ function init() {
   if (session && session.accountKey) {
     currentSession = session;
     claimPresence(session.accountKey, session.username);
-    watchOwnAccount(session.accountKey, renderAllRelationshipUI);
+    let sweepKicked = false;
+    watchOwnAccount(session.accountKey, (userData) => {
+      renderAllRelationshipUI(userData);
+      if (!sweepKicked && userData) { sweepKicked = true; maybeRunImageSweep(); }
+    });
     watchMyGroupChats(renderGroupsList);
     showLoggedInState(session);
   } else {
